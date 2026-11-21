@@ -1,0 +1,3601 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#F5F5F7" />
+  <title>Mido waawi Pular! – Fuuta Jallon</title>
+  <style>
+    /* =========================================================================
+       1. DESIGN TOKENS – CALM APPLE / iOS MINIMALISM (LIGHT DEFAULT + DARK)
+       ========================================================================= */
+    :root {
+      --bg-outer: #EBEBEF;
+      --bg-canvas: #F5F5F7;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F2F2F7;
+      --bg-segment: #E5E5EA;
+      --bg-nav: rgba(255, 255, 255, 0.84);
+      --bg-header: rgba(245, 245, 247, 0.86);
+
+      --border-hairline: rgba(0, 0, 0, 0.06);
+      --border-control: rgba(0, 0, 0, 0.10);
+
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+
+      --accent: #0F766E;
+      --accent-hover: #0D655E;
+      --accent-soft: rgba(15, 118, 110, 0.09);
+      --accent-soft-strong: rgba(15, 118, 110, 0.16);
+      --accent-on: #FFFFFF;
+
+      --danger: #DC2626;
+      --danger-soft: rgba(220, 38, 38, 0.09);
+
+      --amber-text: #B45309;
+      --amber-soft: rgba(217, 119, 6, 0.10);
+
+      --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+      --shadow-shell: 0 20px 50px rgba(0, 0, 0, 0.08);
+      --shadow-seg: 0 1px 3px rgba(0, 0, 0, 0.09);
+
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+      --radius-pill: 999px;
+      --nav-height: 64px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-outer: #000000;
+      --bg-canvas: #000000;
+      --bg-card: #1C1C1E;
+      --bg-subtle: #2C2C2E;
+      --bg-segment: #2C2C2E;
+      --bg-nav: rgba(28, 28, 30, 0.84);
+      --bg-header: rgba(0, 0, 0, 0.82);
+
+      --border-hairline: rgba(255, 255, 255, 0.08);
+      --border-control: rgba(255, 255, 255, 0.14);
+
+      --text-primary: #F9FAFB;
+      --text-secondary: #9CA3AF;
+      --text-tertiary: #6B7280;
+
+      --accent: #2DD4BF;
+      --accent-hover: #14B8A6;
+      --accent-soft: rgba(45, 212, 191, 0.13);
+      --accent-soft-strong: rgba(45, 212, 191, 0.22);
+      --accent-on: #042F2E;
+
+      --danger: #F87171;
+      --danger-soft: rgba(248, 113, 113, 0.14);
+
+      --amber-text: #FBBF24;
+      --amber-soft: rgba(251, 191, 36, 0.13);
+
+      --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35);
+      --shadow-shell: 0 20px 60px rgba(0, 0, 0, 0.65);
+      --shadow-seg: 0 1px 3px rgba(0, 0, 0, 0.45);
+    }
+
+    /* =========================================================================
+       2. RESET & BASE TYPOGRAPHY
+       ========================================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow-x: hidden;
+      background: var(--bg-outer);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px;
+      line-height: 1.48;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea, select {
+      font-family: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      transition: transform 0.12s ease, opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      cursor: default;
+    }
+
+    /* =========================================================================
+       3. APP SHELL (MOBILE-FIRST, CENTERED DESKTOP FRAME)
+       ========================================================================= */
+    .app-shell {
+      position: relative;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 520px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: var(--bg-canvas);
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 560px) {
+      .app-shell {
+        margin: 16px auto;
+        min-height: calc(100vh - 32px);
+        border-radius: 28px;
+        border: 1px solid var(--border-hairline);
+        box-shadow: var(--shadow-shell);
+        overflow: hidden;
+      }
+    }
+
+    /* Minimalistischer Header: nur Titel + Dark/Light-Button */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--bg-header);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border-hairline);
+      padding: calc(14px + env(safe-area-inset-top, 0px)) 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .header-title {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      color: var(--text-primary);
+    }
+
+    .theme-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-card);
+      flex-shrink: 0;
+    }
+
+    .theme-btn:hover {
+      color: var(--text-primary);
+    }
+
+    /* Hauptbereich */
+    .main-content {
+      flex: 1;
+      padding: 16px 20px calc(var(--nav-height) + 28px + env(safe-area-inset-bottom, 0px));
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .view-enter {
+      animation: fadeSlide 0.18s ease-out;
+    }
+
+    /* 5-Tab Bottom-Navigation (Frosted Glass) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 520px;
+      z-index: 40;
+      background: var(--bg-nav);
+      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(22px);
+      border-top: 1px solid var(--border-hairline);
+      padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2px;
+    }
+
+    @media (min-width: 560px) {
+      .bottom-nav {
+        position: sticky;
+        left: 0;
+        transform: none;
+      }
+    }
+
+    .nav-btn {
+      min-height: 52px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.85;
+    }
+
+    .nav-btn.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .nav-btn.active svg {
+      stroke-width: 2.2;
+    }
+
+    /* =========================================================================
+       4. SHARED MINIMALIST COMPONENTS
+       ========================================================================= */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 3px;
+      background: var(--bg-segment);
+      border-radius: 12px;
+      gap: 3px;
+    }
+
+    .seg-btn {
+      min-height: 38px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seg-btn.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-weight: 600;
+      box-shadow: var(--shadow-seg);
+    }
+
+    .btn-primary {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: var(--radius-md);
+      background: var(--accent);
+      color: var(--accent-on);
+      font-size: 15px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.45;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      font-size: 15px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .section-eyebrow {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      padding: 0 4px;
+      margin-bottom: 8px;
+    }
+
+    /* Scrollbare Kategorie-Pills */
+    .pills-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 2px 0;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .pills-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pill {
+      flex-shrink: 0;
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-on);
+      font-weight: 600;
+    }
+
+    .empty-card {
+      padding: 36px 20px;
+      text-align: center;
+    }
+
+    .empty-card h3 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .empty-card p {
+      margin: 0 0 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* =========================================================================
+       5. TAB 1: SÄTZE (SURVIVAL PHRASEBOOK)
+       ========================================================================= */
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box svg.ico-search {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 40px 10px 42px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-card);
+      font-size: 16px; /* Verhindert iOS Auto-Zoom */
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .clear-x {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .slim-seg {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg-segment);
+      padding: 3px;
+      border-radius: 10px;
+      gap: 2px;
+    }
+
+    .slim-seg button {
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .slim-seg button.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-weight: 600;
+      box-shadow: var(--shadow-seg);
+    }
+
+    .quiet-progress {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    /* Sanakuyaagal Info Bar */
+    .info-collapse {
+      overflow: hidden;
+    }
+
+    .info-collapse-btn {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .info-collapse-body {
+      display: none;
+      padding: 0 16px 14px;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .info-collapse.open .info-collapse-body {
+      display: block;
+      padding-top: 12px;
+    }
+
+    .chev {
+      width: 18px;
+      height: 18px;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .open > button .chev {
+      transform: rotate(180deg);
+    }
+
+    /* Ultra-Clean Phrase Cards */
+    .phrase-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .phrase-card {
+      padding: 15px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .phrase-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .phrase-pular {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .phrase-de {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .phrase-foot {
+      margin-top: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tag-subtle {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+    }
+
+    .tag-subtle.tag-respect {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .tag-subtle.tag-grenze {
+      background: var(--amber-soft);
+      color: var(--amber-text);
+    }
+
+    .tag-subtle.tag-hart {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .phrase-note {
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+      line-height: 1.35;
+    }
+
+    /* Kreisförmiger Check-Button */
+    .circle-check {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-pill);
+    }
+
+    .circle-check-inner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.75px solid var(--border-control);
+      background: transparent;
+      color: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.16s ease;
+    }
+
+    .circle-check.done .circle-check-inner {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-on);
+    }
+
+    /* =========================================================================
+       6. TAB 2: ÜBERSETZER (GOOGLE TRANSLATE STYLE)
+       ========================================================================= */
+    .lang-bar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 6px;
+      gap: 6px;
+    }
+
+    .lang-label {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      padding: 8px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .swap-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .swap-btn:hover {
+      background: var(--accent-soft);
+    }
+
+    .swap-btn svg {
+      transition: transform 0.25s ease;
+    }
+
+    .swap-btn.rotated svg {
+      transform: rotate(180deg);
+    }
+
+    .trans-input-card {
+      padding: 14px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .trans-textarea-wrap {
+      position: relative;
+    }
+
+    .trans-textarea {
+      width: 100%;
+      min-height: 104px;
+      padding: 4px 36px 4px 0;
+      border: none;
+      background: transparent;
+      resize: none;
+      outline: none;
+      font-size: 18px;
+      line-height: 1.45;
+      color: var(--text-primary);
+    }
+
+    .trans-textarea::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .trans-clear-btn {
+      position: absolute;
+      top: 0;
+      right: -4px;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-pill);
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .trans-clear-btn:hover {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    .example-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .example-chip {
+      min-height: 34px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .example-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Output Card */
+    .trans-output-card {
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .trans-result-text {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.32;
+      color: var(--accent);
+      word-break: break-word;
+    }
+
+    .trans-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .copy-btn {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn.copied {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .source-indicator {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+    }
+
+    .trans-divider {
+      height: 1px;
+      background: var(--border-hairline);
+      margin: 2px 0;
+    }
+
+    .trans-note-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .trans-politeness {
+      display: inline-flex;
+      align-self: flex-start;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 2px 9px;
+      border-radius: 6px;
+    }
+
+    .trans-note-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Loading Pulse */
+    .skeleton-line {
+      height: 22px;
+      border-radius: 8px;
+      background: var(--bg-subtle);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; }
+    }
+
+    /* Verlauf */
+    .history-header-btn {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .history-list {
+      display: none;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .info-collapse.open .history-list {
+      display: block;
+    }
+
+    .history-item {
+      width: 100%;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .history-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .history-item:hover {
+      background: var(--bg-subtle);
+    }
+
+    .history-src {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .history-tgt {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .history-footer {
+      padding: 8px 16px 12px;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .text-btn-muted {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+
+    .text-btn-muted:hover {
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    /* =========================================================================
+       7. TAB 3: ÜBEN (KARTEIKARTEN & ALLTAGS-QUIZ)
+       ========================================================================= */
+    .compact-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .clean-select {
+      flex: 1;
+      min-width: 140px;
+      min-height: 40px;
+      padding: 0 32px 0 12px;
+      border-radius: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-card);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236B7280' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    .compact-chip {
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-card);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .compact-chip.active {
+      background: var(--accent-soft);
+      border-color: transparent;
+      color: var(--accent);
+    }
+
+    /* 3D Flip Card */
+    .flip-stage {
+      perspective: 1100px;
+      width: 100%;
+      user-select: none;
+      touch-action: pan-y;
+      cursor: pointer;
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      min-height: 272px;
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .flip-inner.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 22px;
+      padding: 22px 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-card);
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+      border-color: var(--accent-soft-strong);
+    }
+
+    .flip-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+    }
+
+    .flip-center {
+      text-align: center;
+      padding: 12px 4px;
+    }
+
+    .flip-text {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.28;
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+
+    .flip-back .flip-text {
+      color: var(--accent);
+      font-size: 21px;
+    }
+
+    .flip-note {
+      margin-top: 12px;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .flip-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .two-col-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .card-sub-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding: 0 4px;
+    }
+
+    /* Quiz */
+    .quiz-card {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .progress-slim {
+      width: 100%;
+      height: 4px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      overflow: hidden;
+    }
+
+    .progress-slim-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: var(--radius-pill);
+      transition: width 0.28s ease;
+    }
+
+    .quiz-question {
+      font-size: 17.5px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+
+    .quiz-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quiz-opt {
+      width: 100%;
+      min-height: 50px;
+      padding: 13px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      border: 1.5px solid transparent;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .quiz-opt:hover:not(:disabled) {
+      border-color: var(--border-control);
+    }
+
+    .quiz-opt.correct {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .quiz-opt.wrong {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    .quiz-opt.dim {
+      opacity: 0.42;
+    }
+
+    .quiz-explain {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--bg-subtle);
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .quiz-explain strong {
+      color: var(--text-primary);
+    }
+
+    /* =========================================================================
+       8. TAB 4: BAUEN (SATZBAUER & BEFEHL / VERBOT)
+       ========================================================================= */
+    .preview-card {
+      padding: 22px 20px 18px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .preview-pular {
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .preview-pular .accent-end {
+      color: var(--accent);
+    }
+
+    .preview-de {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .preview-breakdown {
+      margin-top: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-hairline);
+      font-size: 12.5px;
+      color: var(--text-tertiary);
+      line-height: 1.45;
+    }
+
+    .chip-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .chip-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .select-chip {
+      min-height: 46px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-hairline);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .select-chip .sc-main {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .select-chip .sc-sub {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .select-chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .select-chip.active .sc-main {
+      color: var(--accent);
+    }
+
+    .cmd-pair {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 420px) {
+      .cmd-pair {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .cmd-card {
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cmd-kicker {
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+    }
+
+    .cmd-kicker.neg {
+      color: var(--danger);
+    }
+
+    .cmd-pular {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .cmd-de {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* =========================================================================
+       9. TAB 5: GRAMMATIK (8 SIMPLE CHAPTERS + MINI-CHECKS)
+       ========================================================================= */
+    .gram-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .gram-item {
+      overflow: hidden;
+    }
+
+    .gram-head {
+      width: 100%;
+      min-height: 58px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .gram-head-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .gram-index {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .gram-item.open .gram-index {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .gram-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .gram-content {
+      display: none;
+      padding: 0 16px 18px;
+      border-top: 1px solid var(--border-hairline);
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .gram-item.open .gram-content {
+      display: flex;
+      padding-top: 14px;
+    }
+
+    .gram-intro {
+      margin: 0;
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .formula-box {
+      background: var(--accent-soft);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .formula-box strong {
+      color: var(--accent);
+    }
+
+    .examples-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .examples-list b {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .mini-check {
+      padding-top: 12px;
+      border-top: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mini-check-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+    }
+
+    .mini-check-q {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mini-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .mini-opt {
+      min-height: 42px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: var(--bg-subtle);
+      border: 1.5px solid transparent;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .mini-opt.ok {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .mini-opt.bad {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    .mini-feedback {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      padding: 8px 10px;
+      border-radius: 9px;
+      background: var(--bg-subtle);
+    }
+
+    /* =========================================================================
+       10. SUBTLE TOAST
+       ========================================================================= */
+    .toast {
+      position: fixed;
+      top: calc(74px + env(safe-area-inset-top, 0px));
+      left: 50%;
+      transform: translate(-50%, -8px);
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+      background: var(--text-primary);
+      color: var(--bg-card);
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Minimalistischer Header -->
+    <header class="app-header">
+      <h1 id="header-title" class="header-title">Sätze</h1>
+      <button id="btn-theme" class="theme-btn" type="button" aria-label="Darstellung wechseln" title="Hell / Dunkel">
+        <svg id="ico-moon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+        </svg>
+        <svg id="ico-sun" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24" style="display:none;">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Hauptbereich -->
+    <main id="main-content" class="main-content"></main>
+
+    <!-- 5-Tab Bottom-Navigation (Frosted Glass) -->
+    <nav class="bottom-nav" aria-label="Navigation">
+      <button type="button" class="nav-btn active" data-tab="saetze">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h6m-8 8l3.5-3H18a3 3 0 003-3V7a3 3 0 00-3-3H6a3 3 0 00-3 3v7a3 3 0 002 2.83V20z"/>
+        </svg>
+        <span>Sätze</span>
+      </button>
+
+      <button type="button" class="nav-btn" data-tab="uebersetzer">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h10M9 4v3m3 0c-.8 3.2-3 6-6.5 8M6.5 10.5c1.2 1.8 3 3.4 5 4.5M14 19l3.5-9L21 19m-5.7-2.5h4.4"/>
+        </svg>
+        <span>Übersetzer</span>
+      </button>
+
+      <button type="button" class="nav-btn" data-tab="ueben">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="6" width="16" height="12" rx="2.5"></rect>
+          <path stroke-linecap="round" d="M8 3.5h8M9 12h6"/>
+        </svg>
+        <span>Üben</span>
+      </button>
+
+      <button type="button" class="nav-btn" data-tab="bauen">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3.5" y="4.5" width="7" height="6.5" rx="2"></rect>
+          <rect x="13.5" y="4.5" width="7" height="6.5" rx="2"></rect>
+          <rect x="3.5" y="13.5" width="17" height="6" rx="2"></rect>
+        </svg>
+        <span>Bauen</span>
+      </button>
+
+      <button type="button" class="nav-btn" data-tab="grammatik">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 6.5A2.5 2.5 0 017 4h12.5v15H7a2.5 2.5 0 00-2.5 2.5V6.5z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 18.5A2.5 2.5 0 017 16h12.5"/>
+        </svg>
+        <span>Grammatik</span>
+      </button>
+    </nav>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* =======================================================================
+         1. KATEGORIEN & ~148 AUTHENTISCHE FUUTA-JALLON EINTRÄGE
+         ======================================================================= */
+      const TAB_TITLES = {
+        saetze: 'Sätze',
+        uebersetzer: 'Übersetzer',
+        ueben: 'Üben',
+        bauen: 'Bauen',
+        grammatik: 'Grammatik',
+      };
+
+      const CATEGORIES = [
+        { id: 'begruessung', label: 'Begrüßung' },
+        { id: 'vorstellen',  label: 'Vorstellen' },
+        { id: 'essen',       label: 'Essen' },
+        { id: 'gefuehle',    label: 'Gefühle & Körper' },
+        { id: 'einkauf',     label: 'Einkauf & Zeit' },
+        { id: 'unterwegs',   label: 'Unterwegs' },
+        { id: 'klartext',    label: 'Klartext & Streit' },
+      ];
+
+      // tag: '' | 'Respekt' | 'Grenze' | 'Foppen' | 'Beleidigung'
+      const PHRASES = [
+        // --- Begrüßung & Notfall (29) ---
+        { id: 'b01', cat: 'begruessung', pular: 'A jaraama.', de: 'Hallo / Danke (Du)', note: 'Zu Gleichaltrigen & Jüngeren' },
+        { id: 'b02', cat: 'begruessung', pular: 'On jaraama.', de: 'Hallo / Danke (Sie / Ihr)', tag: 'Respekt', note: 'Zu Älteren, Fremden & Gruppen' },
+        { id: 'b03', cat: 'begruessung', pular: 'Tanna alaa?', de: 'Alles in Ordnung?', note: 'Wörtlich: Gibt es kein Übel?' },
+        { id: 'b04', cat: 'begruessung', pular: 'Jam tun.', de: 'Alles gut / Nur Frieden.', note: 'Standard-Antwort auf fast jede Begrüßung' },
+        { id: 'b05', cat: 'begruessung', pular: "No wa'i?", de: "Wie geht's? / Was geht?" },
+        { id: 'b06', cat: 'begruessung', pular: 'No marsude?', de: "Läuft's? (von frz. ça marche)" },
+        { id: 'b07', cat: 'begruessung', pular: 'No marsude fota.', de: 'Läuft richtig gut.' },
+        { id: 'b08', cat: 'begruessung', pular: 'No marsude seeda.', de: 'Läuft ganz okay.' },
+        { id: 'b09', cat: 'begruessung', pular: 'Beyngure nden no e jam?', de: 'Geht es der Familie gut?' },
+        { id: 'b10', cat: 'begruessung', pular: 'On belike e jam?', de: 'Haben Sie gut geschlafen?', tag: 'Respekt', note: 'Morgengruß für Ältere' },
+        { id: 'b11', cat: 'begruessung', pular: 'A walli e jam?', de: 'Hast du gut geschlafen?' },
+        { id: 'b12', cat: 'begruessung', pular: 'En jango, si Alla jabi.', de: 'Bis morgen, so Gott will.' },
+        { id: 'b13', cat: 'begruessung', pular: 'En ontuma.', de: 'Bis später.' },
+        { id: 'b14', cat: 'begruessung', pular: 'Oo-o!', de: 'Tschüss!', note: "Andere Betonung als O'o (Nein)" },
+        { id: 'b15', cat: 'begruessung', pular: 'Hii-hi.', de: 'Ja.' },
+        { id: 'b16', cat: 'begruessung', pular: "O'o. / O'owooye.", de: 'Nein.' },
+        { id: 'b17', cat: 'begruessung', pular: 'Awa.', de: 'Okay / Alles klar.' },
+        { id: 'b18', cat: 'begruessung', pular: 'Accee hakkee.', de: 'Entschuldigung / Tut mir leid.' },
+        { id: 'b19', cat: 'begruessung', pular: 'Albarka.', de: 'Danke (für Essen & Geschenke).' },
+        { id: 'b20', cat: 'begruessung', pular: "Barka'alla.", de: 'Gern geschehen (Antwort auf Albarka).' },
+        { id: 'b21', cat: 'begruessung', pular: 'Mi faamaali.', de: 'Ich habe nicht verstanden.' },
+        { id: 'b22', cat: 'begruessung', pular: 'Haliree doy.', de: 'Sprechen Sie bitte langsam.', tag: 'Respekt' },
+        { id: 'b23', cat: 'begruessung', pular: 'Fillitee.', de: 'Bitte wiederholen.' },
+        { id: 'b24', cat: 'begruessung', pular: 'Mido ekitaade.', de: 'Ich lerne (noch).' },
+        { id: 'b25', cat: 'begruessung', pular: 'Mi waawataa Pular buy.', de: 'Ich spreche nicht viel Pular.' },
+        { id: 'b26', cat: 'begruessung', pular: 'Mido waawi Pular seeda tun.', de: 'Ich spreche nur ein bisschen Pular.' },
+        { id: 'b27', cat: 'begruessung', pular: 'Pular an lannii!', de: 'Mehr Pular kann ich nicht!', note: 'Sorgt fast immer für ein Lächeln' },
+        { id: 'b28', cat: 'begruessung', pular: 'Ko honno dun innete e Pular?', de: 'Wie heißt das auf Pular?' },
+        { id: 'b29', cat: 'begruessung', pular: 'Ko hondun woni "..."?', de: 'Was bedeutet "..."?' },
+
+        // --- Vorstellen & Familie (24) ---
+        { id: 'v01', cat: 'vorstellen', pular: 'Ko honno inneteda?', de: 'Wie heißt du?' },
+        { id: 'v02', cat: 'vorstellen', pular: 'Ko ... mi innete.', de: 'Ich heiße ...' },
+        { id: 'v03', cat: 'vorstellen', pular: 'Yettoore maa?', de: 'Wie ist dein Nachname?', note: 'Im Fuuta sehr wichtig (Diallo, Bah, Sow, Barry)' },
+        { id: 'v04', cat: 'vorstellen', pular: 'Ko honto iwudaa?', de: 'Wo kommst du her?' },
+        { id: 'v05', cat: 'vorstellen', pular: 'Ko Almaañ mi iwi.', de: 'Ich komme aus Deutschland.' },
+        { id: 'v06', cat: 'vorstellen', pular: 'Ko honto hodudaa?', de: 'Wo wohnst du?' },
+        { id: 'v07', cat: 'vorstellen', pular: 'Ko hondun gollataa?', de: 'Was arbeitest du?' },
+        { id: 'v08', cat: 'vorstellen', pular: 'Ko mi jangoowo.', de: 'Ich bin Student / Schüler.' },
+        { id: 'v09', cat: 'vorstellen', pular: 'Wonaa mi Faranseejo.', de: 'Ich bin kein Franzose.' },
+        { id: 'v10', cat: 'vorstellen', pular: 'Ko duubi jelu marudaa?', de: 'Wie alt bist du?' },
+        { id: 'v11', cat: 'vorstellen', pular: 'A jombii?', de: 'Bist du verheiratet? (an einen Mann)' },
+        { id: 'v12', cat: 'vorstellen', pular: 'A jombaama?', de: 'Bist du verheiratet? (an eine Frau)' },
+        { id: 'v13', cat: 'vorstellen', pular: 'Mi jombaali. / Mi jombaaka.', de: 'Ich bin nicht verheiratet.', note: 'jombaali (Mann) · jombaaka (Frau)' },
+        { id: 'v14', cat: 'vorstellen', pular: 'baaba', de: 'Vater', note: 'Respektvoll: ben' },
+        { id: 'v15', cat: 'vorstellen', pular: 'neene', de: 'Mutter', note: 'Respektvoll: yumma' },
+        { id: 'v16', cat: 'vorstellen', pular: 'koto', de: 'älterer Bruder' },
+        { id: 'v17', cat: 'vorstellen', pular: 'jaaja', de: 'ältere Schwester' },
+        { id: 'v18', cat: 'vorstellen', pular: 'miñan', de: 'jüngerer Bruder / jüngere Schwester' },
+        { id: 'v19', cat: 'vorstellen', pular: 'beyngu', de: 'Ehefrau' },
+        { id: 'v20', cat: 'vorstellen', pular: 'moodi', de: 'Ehemann' },
+        { id: 'v21', cat: 'vorstellen', pular: 'njaatigi', de: 'Freund / Gastgeber (auch Partner)' },
+        { id: 'v22', cat: 'vorstellen', pular: 'goreejo', de: 'Altersgenosse / guter Kumpel' },
+        { id: 'v23', cat: 'vorstellen', pular: 'mawbe', de: 'Eltern / Ältere' },
+        { id: 'v24', cat: 'vorstellen', pular: 'faybe', de: 'Kinder' },
+
+        // --- Essen & Bedürfnisse (25) ---
+        { id: 'e01', cat: 'essen', pular: 'Mido weelaa.', de: 'Ich habe Hunger.' },
+        { id: 'e02', cat: 'essen', pular: 'Mi weelaaka.', de: 'Ich habe keinen Hunger.' },
+        { id: 'e03', cat: 'essen', pular: 'Mido dondaa.', de: 'Ich habe Durst.' },
+        { id: 'e04', cat: 'essen', pular: 'Mi haari tef!', de: 'Ich bin komplett satt!', note: 'tef = randvoll' },
+        { id: 'e05', cat: 'essen', pular: 'Ñiiri no woodi?', de: 'Gibt es Essen?' },
+        { id: 'e06', cat: 'essen', pular: 'Ñiiri alaa.', de: 'Es gibt kein Essen.' },
+        { id: 'e07', cat: 'essen', pular: 'No weli!', de: 'Es schmeckt gut!' },
+        { id: 'e08', cat: 'essen', pular: 'Welaa!', de: 'Es schmeckt nicht!' },
+        { id: 'e09', cat: 'essen', pular: 'Okkoran ndiyan mi yara.', de: 'Gib mir bitte Wasser zu trinken.' },
+        { id: 'e10', cat: 'essen', pular: 'Mido faalaa ...', de: 'Ich möchte / will ...' },
+        { id: 'e11', cat: 'essen', pular: 'Mi faalaaka ...', de: 'Ich möchte kein ...' },
+        { id: 'e12', cat: 'essen', pular: 'Mido yidi ...', de: 'Ich mag ...' },
+        { id: 'e13', cat: 'essen', pular: 'Mi yidaa ...', de: 'Ich mag ... nicht.' },
+        { id: 'e14', cat: 'essen', pular: 'Mido faalaa yahude ka hurgo.', de: 'Ich muss auf die Toilette.' },
+        { id: 'e15', cat: 'essen', pular: 'maaro', de: 'Reis' },
+        { id: 'e16', cat: 'essen', pular: 'maafe tiga', de: 'Erdnusssoße' },
+        { id: 'e17', cat: 'essen', pular: 'teew', de: 'Fleisch' },
+        { id: 'e18', cat: 'essen', pular: 'liyyi', de: 'Fisch' },
+        { id: 'e19', cat: 'essen', pular: 'bireedi', de: 'Brot' },
+        { id: 'e20', cat: 'essen', pular: 'kosan', de: 'Sauermilch / Joghurt' },
+        { id: 'e21', cat: 'essen', pular: 'ndiyan', de: 'Wasser' },
+        { id: 'e22', cat: 'essen', pular: 'sukkar', de: 'Zucker' },
+        { id: 'e23', cat: 'essen', pular: 'landan', de: 'Salz' },
+        { id: 'e24', cat: 'essen', pular: 'ñamaku', de: 'Chili / scharfer Pfeffer' },
+        { id: 'e25', cat: 'essen', pular: 'gerto', de: 'Hühnchen' },
+
+        // --- Gefühle, Körper & Reaktionen (23) ---
+        { id: 'g01', cat: 'gefuehle', pular: 'Mido weltii.', de: 'Ich freue mich / bin glücklich.' },
+        { id: 'g02', cat: 'gefuehle', pular: 'Mido seytini.', de: 'Ich bin wütend / sauer.' },
+        { id: 'g03', cat: 'gefuehle', pular: 'Mido ronki.', de: 'Ich bin müde / erschöpft.' },
+        { id: 'g04', cat: 'gefuehle', pular: 'Mido noni.', de: 'Ich bin schläfrig.' },
+        { id: 'g05', cat: 'gefuehle', pular: 'Mido huli.', de: 'Ich habe Angst.' },
+        { id: 'g06', cat: 'gefuehle', pular: 'Mido jaangaa.', de: 'Mir ist kalt.' },
+        { id: 'g07', cat: 'gefuehle', pular: 'Mido ngulaa.', de: 'Mir ist heiß.' },
+        { id: 'g08', cat: 'gefuehle', pular: 'Mido hawji.', de: 'Ich habe es eilig.' },
+        { id: 'g09', cat: 'gefuehle', pular: 'Mido nawni.', de: 'Ich bin krank.' },
+        { id: 'g10', cat: 'gefuehle', pular: 'Hoore nden no muusude lan.', de: 'Mein Kopf tut mir weh.' },
+        { id: 'g11', cat: 'gefuehle', pular: 'Reedu an no muusude.', de: 'Mein Bauch tut weh.' },
+        { id: 'g12', cat: 'gefuehle', pular: 'Bandu an ndun no wuli.', de: 'Ich habe Fieber.', note: 'Wörtlich: Mein Körper ist heiß' },
+        { id: 'g13', cat: 'gefuehle', pular: 'No butti seeda?', de: 'Geht es dir schon etwas besser?', note: 'Höfliche Antwort ist immer „Hii-hi!“' },
+        { id: 'g14', cat: 'gefuehle', pular: 'Yo Alla beydu aafiya.', de: 'Gute Besserung (Gott gebe Gesundheit).' },
+        { id: 'g15', cat: 'gefuehle', pular: 'Amiina.', de: 'Amen / Danke (Antwort auf Segenswünsche).' },
+        { id: 'g16', cat: 'gefuehle', pular: 'Himo moyyi.', de: 'Er / sie ist nett / gut.' },
+        { id: 'g17', cat: 'gefuehle', pular: 'O moyyaa.', de: 'Er / sie ist nicht nett.' },
+        { id: 'g18', cat: 'gefuehle', pular: 'Himo mari hakkil.', de: 'Er / sie ist klug / hat Verstand.' },
+        { id: 'g19', cat: 'gefuehle', pular: 'No foti!', de: 'Das ist schön!' },
+        { id: 'g20', cat: 'gefuehle', pular: 'No moyyi!', de: 'Das ist gut!' },
+        { id: 'g21', cat: 'gefuehle', pular: 'Moyyaa!', de: 'Das ist nicht gut!' },
+        { id: 'g22', cat: 'gefuehle', pular: 'Jaka!', de: 'Ach was! / Echt jetzt!' },
+        { id: 'g23', cat: 'gefuehle', pular: 'Pellet!', de: 'Wirklich! / Stimmt genau!' },
+
+        // --- Einkauf, Zahlen & Zeit (23) ---
+        { id: 's01', cat: 'einkauf', pular: 'Ko jelu?', de: 'Wie viel kostet das?' },
+        { id: 's02', cat: 'einkauf', pular: 'No satti!', de: 'Das ist zu teuer!' },
+        { id: 's03', cat: 'einkauf', pular: 'Duytu seeda!', de: 'Geh ein bisschen mit dem Preis runter!' },
+        { id: 's04', cat: 'einkauf', pular: 'Fii soodugol ko jelu?', de: 'Was ist dein letzter Preis?' },
+        { id: 's05', cat: 'einkauf', pular: 'Accu ..., mi sooday.', de: 'Mach es für ..., dann kaufe ich.' },
+        { id: 's06', cat: 'einkauf', pular: 'A maraa cewdi?', de: 'Hast du kein Kleingeld?' },
+        { id: 's07', cat: 'einkauf', pular: 'Mi alaa kaalisi.', de: 'Ich habe kein Geld.' },
+        { id: 's08', cat: 'einkauf', pular: 'Mido jogii ...', de: 'Ich habe ... (bei mir).' },
+        { id: 's09', cat: 'einkauf', pular: 'Mi jogaaki ...', de: 'Ich habe kein ... (bei mir).' },
+        { id: 's10', cat: 'einkauf', pular: 'Mido mari ...', de: 'Ich habe / besitze ...' },
+        { id: 's11', cat: 'einkauf', pular: "go'o, didi, tati, nay, jowi", de: '1, 2, 3, 4, 5' },
+        { id: 's12', cat: 'einkauf', pular: 'jeego, jeedidi, jeetati, jeenay, sappo', de: '6, 7, 8, 9, 10' },
+        { id: 's13', cat: 'einkauf', pular: 'nogay', de: '20 (zwanzig)' },
+        { id: 's14', cat: 'einkauf', pular: 'teemedere', de: '100 (hundert)' },
+        { id: 's15', cat: 'einkauf', pular: 'wuluure', de: '1.000 (tausend)', note: 'Mehrzahl: guluuji (z. B. guluuji jowi = 5.000)' },
+        { id: 's16', cat: 'einkauf', pular: 'hande', de: 'heute' },
+        { id: 's17', cat: 'einkauf', pular: 'jango', de: 'morgen' },
+        { id: 's18', cat: 'einkauf', pular: 'hanki', de: 'gestern' },
+        { id: 's19', cat: 'einkauf', pular: 'kisan', de: 'sofort / auf der Stelle' },
+        { id: 's20', cat: 'einkauf', pular: 'jooni', de: 'jetzt' },
+        { id: 's21', cat: 'einkauf', pular: 'seeda', de: 'ein bisschen / wenig' },
+        { id: 's22', cat: 'einkauf', pular: 'buy', de: 'viel / sehr' },
+        { id: 's23', cat: 'einkauf', pular: 'tun', de: 'nur / bloß' },
+
+        // --- Unterwegs & Richtungen (21) ---
+        { id: 'u01', cat: 'unterwegs', pular: 'Ko honto yahataa?', de: 'Wo gehst du hin?', note: 'Sehr üblicher Smalltalk auf der Straße' },
+        { id: 'u02', cat: 'unterwegs', pular: 'Ko honto ... woni?', de: 'Wo ist ...?' },
+        { id: 'u03', cat: 'unterwegs', pular: 'No woddi?', de: 'Ist es weit?' },
+        { id: 'u04', cat: 'unterwegs', pular: 'Woddaa.', de: 'Es ist nicht weit.' },
+        { id: 'u05', cat: 'unterwegs', pular: 'Selir ka ñaamo.', de: 'Bieg rechts ab.' },
+        { id: 'u06', cat: 'unterwegs', pular: 'Selir ka nano.', de: 'Bieg links ab.' },
+        { id: 'u07', cat: 'unterwegs', pular: 'Jokku ngol laawol.', de: 'Folge dieser Straße.' },
+        { id: 'u08', cat: 'unterwegs', pular: 'Mi majjii.', de: 'Ich habe mich verlaufen.' },
+        { id: 'u09', cat: 'unterwegs', pular: 'Mahen!', de: "Los geht's! / Gehen wir!" },
+        { id: 'u10', cat: 'unterwegs', pular: 'Aru!', de: 'Komm!' },
+        { id: 'u11', cat: 'unterwegs', pular: 'Yahu!', de: 'Geh!' },
+        { id: 'u12', cat: 'unterwegs', pular: 'Joodo!', de: 'Setz dich!' },
+        { id: 'u13', cat: 'unterwegs', pular: 'Habbo!', de: 'Warte!' },
+        { id: 'u14', cat: 'unterwegs', pular: 'Wadu doy!', de: 'Mach langsam! / Pass auf!' },
+        { id: 'u15', cat: 'unterwegs', pular: 'Tinna!', de: 'Schnell! / Beeil dich!' },
+        { id: 'u16', cat: 'unterwegs', pular: 'gaa / doo / ton', de: 'hier (mein Ort) / hier / dort' },
+        { id: 'u17', cat: 'unterwegs', pular: 'maakiti', de: 'Markt' },
+        { id: 'u18', cat: 'unterwegs', pular: 'suudu', de: 'Haus / Zimmer' },
+        { id: 'u19', cat: 'unterwegs', pular: 'laawol', de: 'Straße / Weg' },
+        { id: 'u20', cat: 'unterwegs', pular: 'oto / taksi', de: 'Auto / Taxi' },
+        { id: 'u21', cat: 'unterwegs', pular: 'gaar watiir', de: 'Buschtaxi-Bahnhof' },
+
+        // --- Klartext, Grenzen & Beleidigungen (23) ---
+        { id: 'k01', cat: 'klartext', pular: 'Accu lan!', de: 'Lass mich in Ruhe!', tag: 'Grenze' },
+        { id: 'k02', cat: 'klartext', pular: 'Yahu too!', de: 'Geh weg / Hau ab!', tag: 'Grenze' },
+        { id: 'k03', cat: 'klartext', pular: 'Wata a fitin lan!', de: 'Nerv mich nicht!', tag: 'Grenze' },
+        { id: 'k04', cat: 'klartext', pular: 'Mi haabii!', de: 'Ich hab genug / bin es satt!', tag: 'Grenze' },
+        { id: 'k05', cat: 'klartext', pular: 'A tampinii lan!', de: 'Du nervst / erschöpfst mich!', tag: 'Grenze' },
+        { id: 'k06', cat: 'klartext', pular: 'Wata a meem lan!', de: 'Fass mich nicht an!', tag: 'Grenze' },
+        { id: 'k07', cat: 'klartext', pular: "De'u!", de: 'Sei still / Halt die Klappe!', tag: 'Grenze' },
+        { id: 'k08', cat: 'klartext', pular: 'Mi faalaaka maa!', de: 'Ich will dich nicht!', tag: 'Grenze' },
+        { id: 'k09', cat: 'klartext', pular: 'Mi yidaa maa!', de: 'Ich mag dich nicht!', tag: 'Grenze' },
+        { id: 'k10', cat: 'klartext', pular: 'Wata a fenu!', de: 'Lüg nicht!', tag: 'Grenze' },
+        { id: 'k11', cat: 'klartext', pular: 'Hida fena!', de: 'Du lügst!', tag: 'Grenze' },
+        { id: 'k12', cat: 'klartext', pular: 'Ko a fenoowo!', de: 'Du bist ein Lügner!', tag: 'Beleidigung' },
+        { id: 'k13', cat: 'klartext', pular: 'Hida kaani kas!', de: 'Du bist extrem hässlich!', tag: 'Beleidigung', note: 'kas = maximaler Verstärker' },
+        { id: 'k14', cat: 'klartext', pular: 'O maraa hakkil few!', de: 'Er / sie hat überhaupt keinen Verstand!', tag: 'Beleidigung' },
+        { id: 'k15', cat: 'klartext', pular: 'Ko a komidudo!', de: 'Du bist dumm / ein Idiot!', tag: 'Beleidigung' },
+        { id: 'k16', cat: 'klartext', pular: 'Ko a feetudo!', de: 'Du bist verrückt!', tag: 'Foppen', note: 'Unter Freunden locker, im Streit hart' },
+        { id: 'k17', cat: 'klartext', pular: 'Ko a puydo!', de: 'Du bist faul!', tag: 'Foppen' },
+        { id: 'k18', cat: 'klartext', pular: 'Ko a gujjo!', de: 'Du bist ein Dieb!', tag: 'Foppen', note: 'Beliebt beim Sanakuyaagal-Clan-Foppen' },
+        { id: 'k19', cat: 'klartext', pular: 'Ko a maccudo!', de: 'Du bist ein Sklave!', tag: 'Foppen', note: 'NUR im Clan-Spaß (Diallo↔Bah, Sow↔Barry) – sonst absolutes Tabu!' },
+        { id: 'k20', cat: 'klartext', pular: 'Hida fandi!', de: 'Du bist klein / unbedeutend!', tag: 'Beleidigung' },
+        { id: 'k21', cat: 'klartext', pular: 'Hida huli reedu!', de: 'Du bist ein Feigling!', tag: 'Beleidigung' },
+        { id: 'k22', cat: 'klartext', pular: 'Mi piyete!', de: 'Ich verprügel dich!', tag: 'Beleidigung', note: 'Drohung oder derber Spaß unter Freunden' },
+        { id: 'k23', cat: 'klartext', pular: 'Mido seytini buy!', de: 'Ich bin richtig wütend!', tag: 'Grenze' },
+      ];
+
+      // Zusätzliches Offline-Kernwörterbuch für Fallback-Übersetzung
+      const EXTRA_DICT = [
+        ['ich', 'mi / mido'], ['du', 'a / hida'], ['er', 'o / himo'], ['sie', 'o / himo'],
+        ['wir', 'en / men'], ['ihr', 'on / hidon'], ['ja', 'hii-hi'], ['nein', "o'o"],
+        ['danke', 'a jaraama'], ['bitte', 'tino'], ['hallo', 'a jaraama'], ['tschüss', 'oo-o'],
+        ['gut', 'no moyyi'], ['schlecht', 'moyyaa'], ['schön', 'no foti'], ['groß', 'njandi'],
+        ['klein', 'fandi'], ['heiß', 'wuli'], ['kalt', 'buubi'], ['teuer', 'no satti'],
+        ['gehen', 'yahugol'], ['kommen', 'arugol'], ['essen', 'ñaamugol'], ['trinken', 'yarugol'],
+        ['kaufen', 'soodugol'], ['verkaufen', 'yeeyugol'], ['arbeiten', 'gollugol'], ['lernen', 'jangugol'],
+        ['helfen', 'wallugol'], ['schlafen', 'daanagol'], ['warten', 'habbagol'], ['sitzen', 'joodagol'],
+        ['lügen', 'fenugol'], ['kämpfen', 'habugol'], ['beleidigen', 'yennugol'], ['verstehen', 'faamugol'],
+        ['wissen', 'andugol'], ['wollen', 'faalegol'], ['mögen', 'yidugol'], ['können', 'waawugol'],
+        ['wo', 'ko honto'], ['was', 'ko hondun'], ['wer', 'ko hombo'], ['warum', 'ko fii hondun'],
+        ['wieviel', 'ko jelu'], ['geld', 'kaalisi'], ['essen', 'ñiiri'], ['wasser', 'ndiyan'],
+        ['markt', 'maakiti'], ['haus', 'suudu'], ['stadt', 'saare'], ['dorf', 'hodo'],
+        ['straße', 'laawol'], ['auto', 'oto'], ['freund', 'njaatigi'], ['familie', 'beyngure'],
+        ['mann', 'gorko'], ['frau', 'debbo'], ['kind', 'paykun'], ['kopf', 'hoore'],
+        ['bauch', 'reedu'], ['hand', 'jungo'], ['krank', 'nawni'], ['müde', 'ronki'],
+        ['hunger', 'weelaa'], ['durst', 'dondaa'], ['wütend', 'seytini'], ['glücklich', 'weltii'],
+        ['angst', 'huli'], ['rechts', 'ñaamo'], ['links', 'nano'], ['langsam', 'doy'],
+        ['schnell', 'tinna'], ['hier', 'doo'], ['dort', 'ton'], ['heute', 'hande'],
+        ['morgen', 'jango'], ['gestern', 'hanki'], ['jetzt', 'jooni'], ['sofort', 'kisan'],
+        ['deutschland', 'Almaañ'], ['guinea', 'Lagine'],
+      ];
+
+      /* =======================================================================
+         2. 20 REALISTISCHE ALLTAGS-QUIZ-SZENARIEN
+         ======================================================================= */
+      const QUIZ_QUESTIONS = [
+        {
+          q: 'Jemand grüßt dich mit „Tanna alaa?“. Was antwortest du sofort?',
+          options: ['Jam tun.', 'Moyyaa!', 'Alaa.', 'Mi majjii.'],
+          correct: 0,
+          explain: 'Auf „Tanna alaa?“ (Kein Übel?) antwortet man fast immer mit „Jam tun.“ (Alles gut / Nur Frieden).',
+        },
+        {
+          q: 'Du triffst eine ältere Person auf der Straße. Wie grüßt du respektvoll?',
+          options: ['On jaraama.', 'A jaraama.', "No wa'i?", "De'u!"],
+          correct: 0,
+          explain: 'Für Ältere, Fremde und Respektspersonen nutzt du im Pular die Pluralform „On jaraama.“.',
+        },
+        {
+          q: 'Jemand spricht zu schnell und du verstehst nichts. Was sagst du?',
+          options: ['Mi faamaali. Haliree doy.', 'Pular an lannii. Yahu too!', 'No weli. Fillitee.', 'Mi alaa kaalisi.'],
+          correct: 0,
+          explain: '„Mi faamaali“ (Ich habe nicht verstanden) + „Haliree doy“ (Bitte langsam sprechen) hilft sofort.',
+        },
+        {
+          q: 'Auf dem Markt ist der erste Preis viel zu hoch. Was ist der beste Konter?',
+          options: ['No satti! Duytu seeda!', 'No foti! Mi haari tef!', 'Woddaa! Mahen!', 'Albarka!'],
+          correct: 0,
+          explain: '„No satti!“ (Zu teuer!) und „Duytu seeda!“ (Geh etwas runter!) sind die Klassiker beim Handeln.',
+        },
+        {
+          q: 'Nach dem Essen beim Gastgeber bist du komplett voll. Was sagst du?',
+          options: ['Mi haari tef! Albarka!', 'Mido weelaa! Ñiiri alaa.', 'Welaa! Mi yidaa.', 'Wata a fenu!'],
+          correct: 0,
+          explain: '„Mi haari tef!“ (Ich bin randvoll!) und „Albarka!“ (Danke fürs Essen) sind perfekt.',
+        },
+        {
+          q: 'Jemand geht dir auf die Nerven und du willst deine Ruhe. Was sagst du klar?',
+          options: ['Accu lan! Wata a fitin lan!', 'Aru! Joodo!', 'Ko tooli! Naatu.', 'Mido weltii!'],
+          correct: 0,
+          explain: '„Accu lan!“ (Lass mich in Ruhe!) und „Wata a fitin lan!“ (Nerv mich nicht!) setzen eine klare Grenze.',
+        },
+        {
+          q: 'Jemand fasst dich ungefragt am Arm an. Wie reagierst du direkt?',
+          options: ['Wata a meem lan!', 'Okkoran ndiyan!', 'Selir ka nano!', 'No butti seeda?'],
+          correct: 0,
+          explain: '„Wata a meem lan!“ bedeutet eindeutig „Fass mich nicht an!“.',
+        },
+        {
+          q: 'Du merkst, dass dir jemand offensichtlich eine Lüge auftischt:',
+          options: ['Hida fena! Wata a fenu!', 'Pellet! No moyyi!', 'Amiina! En ontuma.', 'Mido dondaa.'],
+          correct: 0,
+          explain: '„Hida fena!“ = Du lügst! „Wata a fenu!“ = Lüg nicht!',
+        },
+        {
+          q: 'Du hast starke Kopfschmerzen. Wie erklärst du das?',
+          options: ['Hoore nden no muusude lan.', 'Bandu an ndun no wuli.', 'Reedu an no muusude.', 'Mido noni.'],
+          correct: 0,
+          explain: '„Hoore“ ist der Kopf – „Hoore nden no muusude lan.“ heißt „Mein Kopf tut mir weh.“.',
+        },
+        {
+          q: 'Du hast dich in der Stadt verlaufen und suchst den Markt:',
+          options: ['Mi majjii. Ko honto maakiti woni?', 'Mi haabii. Ko jelu maakiti?', 'Mido hawji. Maakiti alaa.', 'Ko Almaañ mi iwi.'],
+          correct: 0,
+          explain: '„Mi majjii“ = Ich habe mich verlaufen. „Ko honto ... woni?“ = Wo ist ...?',
+        },
+        {
+          q: 'Du willst dich vorstellen: „Ich komme aus Deutschland und bin kein Franzose.“',
+          options: ['Ko Almaañ mi iwi. Wonaa mi Faranseejo.', 'Ko Almaañ mi hodi. Alaa mi Faranseejo.', 'Ko Almaañ mi yahata. Ko mi Faranseejo.', 'Ko Almaañ mi innete. Moyyaa Faranseejo.'],
+          correct: 0,
+          explain: '„Ko [Land] mi iwi“ = Ich komme aus ... und „Wonaa mi ...“ = Ich bin kein ...',
+        },
+        {
+          q: 'Ein Freund fragt dich beim Kranksein: „No butti seeda?“ (Schon etwas besser?). Was ist die höfliche Antwort im Fuuta?',
+          options: ['Hii-hi!', "O'owooye, moyyaa!", "De'u!", 'Ko a puydo!'],
+          correct: 0,
+          explain: 'Aus Höflichkeit und Gottvertrauen antwortet man im Fuuta Jallon immer mit „Hii-hi!“ (Ja).',
+        },
+        {
+          q: 'Du möchtest wissen, ob der Händler Kleingeld wechseln kann:',
+          options: ['A maraa cewdi?', 'Mi alaa kaalisi.', 'Fii soodugol ko jelu?', 'Mido jogii maaro.'],
+          correct: 0,
+          explain: '„A maraa cewdi?“ bedeutet „Hast du kein Kleingeld?“ (sehr häufig auf dem Markt).',
+        },
+        {
+          q: 'Beim Clan-Scherzen (Sanakuyaagal) zwischen Diallo und Bah sagt jemand lachend „Ko a gujjo!“. Was heißt das?',
+          options: ['Du bist ein Dieb!', 'Du bist ein Lehrer!', 'Du bist mein älterer Bruder!', 'Du bist krank!'],
+          correct: 0,
+          explain: '„Ko a gujjo!“ (Du bist ein Dieb!) ist ein klassischer Neckspruch zwischen verwandten Clans.',
+        },
+        {
+          q: 'Du brauchst dringend eine Toilette. Wie fragst du höflich danach?',
+          options: ['Mido faalaa yahude ka hurgo.', 'Mido faalaa ñaamude maaro.', 'Ko honto gaar watiir woni?', 'Mido jaangaa.'],
+          correct: 0,
+          explain: '„hurgo“ ist die Toilette – „Mido faalaa yahude ka hurgo.“ = Ich muss auf die Toilette.',
+        },
+        {
+          q: 'Du verabschiedest dich für morgen. Was gehört im Fuuta Jallon dazu?',
+          options: ['En jango, si Alla jabi.', 'En jango, welaa.', 'En jango, mi haabii.', 'En jango, jaka.'],
+          correct: 0,
+          explain: '„Si Alla jabi“ (So Gott will) hängt man bei Zukunftsabsprachen fast immer dran.',
+        },
+        {
+          q: 'Jemand soll endlich still sein. Welches kurze Wort nutzt du?',
+          options: ["De'u!", 'Tinna!', 'Mahen!', 'Awa!'],
+          correct: 0,
+          explain: "„De'u!“ bedeutet direkt „Sei still! / Halt die Klappe!“.",
+        },
+        {
+          q: 'Dir wird im Taxi viel zu schnell gefahren. Wie sagst du „Mach langsam / Pass auf!“?',
+          options: ['Wadu doy!', 'Tinna!', 'Yahu too!', 'Selir ka ñaamo!'],
+          correct: 0,
+          explain: '„Wadu doy!“ heißt „Mach langsam / vorsichtig!“ („Tinna!“ wäre das Gegenteil: Schnell!).',
+        },
+        {
+          q: 'Du willst deinen Körperzustand beschreiben: „Ich habe Fieber.“',
+          options: ['Bandu an ndun no wuli.', 'Mido jaangaa.', 'Mido ronki.', 'Hoore nden no foti.'],
+          correct: 0,
+          explain: 'Wörtlich „Mein Körper ist heiß“ → „Bandu an ndun no wuli.“.',
+        },
+        {
+          q: 'Was bedeutet der harte Spruch „O maraa hakkil few!“?',
+          options: ['Er / sie hat überhaupt keinen Verstand!', 'Er / sie hat kein Geld!', 'Er / sie ist sehr klug!', 'Er / sie hat es eilig!'],
+          correct: 0,
+          explain: '„hakkil“ = Verstand, „maraa“ = hat nicht, „few“ = überhaupt nicht.',
+        },
+      ];
+
+      /* =======================================================================
+         3. BAUKASTEN DATEN (6 PERSONEN × 6 FORMEN × 10 REGULÄRE -UGOL VERBEN)
+         ======================================================================= */
+      const BUILDER_PERSONS = [
+        { id: 'mi',  label: 'mi',  deLabel: 'ich',       shortP: 'Mi',  longP: 'Mido',  deSubj: 'Ich',    will: 'will',   kann: 'kann',   werden: 'werde',  sein: 'bin',  haben: 'habe',  idx: 0 },
+        { id: 'a',   label: 'a',   deLabel: 'du',        shortP: 'A',   longP: 'Hida',  deSubj: 'Du',     will: 'willst', kann: 'kannst', werden: 'wirst',  sein: 'bist', haben: 'hast',  idx: 1 },
+        { id: 'o',   label: 'o',   deLabel: 'er / sie',  shortP: 'O',   longP: 'Himo',  deSubj: 'Er/Sie', will: 'will',   kann: 'kann',   werden: 'wird',   sein: 'ist',  haben: 'hat',   idx: 2 },
+        { id: 'men', label: 'men', deLabel: 'wir exkl.', shortP: 'Men', longP: 'Meden', deSubj: 'Wir',    will: 'wollen', kann: 'können', werden: 'werden', sein: 'sind', haben: 'haben', idx: 3 },
+        { id: 'en',  label: 'en',  deLabel: 'wir inkl.', shortP: 'En',  longP: 'Hiden', deSubj: 'Wir',    will: 'wollen', kann: 'können', werden: 'werden', sein: 'sind', haben: 'haben', idx: 4 },
+        { id: 'be',  label: 'be',  deLabel: 'sie (Pl.)', shortP: 'Be',  longP: 'Hibe',  deSubj: 'Sie',    will: 'wollen', kann: 'können', werden: 'werden', sein: 'sind', haben: 'haben', idx: 5 },
+      ];
+
+      const BUILDER_FORMS = [
+        { id: 'now',  label: 'Jetzt gerade',  sub: 'Lang + -ude',       pron: 'long',  aux: '',       end: 'ude',  note: 'Laufende Handlung' },
+        { id: 'will', label: 'Will (...)',    sub: 'Lang + faalaa',     pron: 'long',  aux: 'faalaa', end: 'ude',  note: 'Wunsch / Absicht' },
+        { id: 'past', label: 'Vergangenheit', sub: 'Kurz + -ii',        pron: 'short', aux: '',       end: 'ii',   note: 'Abgeschlossen' },
+        { id: 'fut',  label: 'Zukunft',       sub: 'Kurz + -ay',        pron: 'short', aux: '',       end: 'ay',   note: 'Wird passieren' },
+        { id: 'neg',  label: 'Verneinung',    sub: 'Kurz + -ataa',      pron: 'short', aux: '',       end: 'ataa', note: 'Mache ich nicht' },
+        { id: 'can',  label: 'Kann (...)',    sub: 'Lang + waawi',      pron: 'long',  aux: 'waawi',  end: 'ude',  note: 'Fähigkeit' },
+      ];
+
+      const BUILDER_VERBS = [
+        { id: 'yah',  inf: 'yahugol',  label: 'gehen',      stem: 'yah',  pres: ['gehe', 'gehst', 'geht', 'gehen', 'gehen', 'gehen'],                 aux: 'sein',  part: 'gegangen',   impSg: 'Geh!',        impPl: 'Geht! / Gehen Sie!',       noSg: 'Geh nicht!',        noPl: 'Geht nicht!' },
+        { id: 'naam', inf: 'ñaamugol', label: 'essen',      stem: 'ñaam', pres: ['esse', 'isst', 'isst', 'essen', 'essen', 'essen'],                  aux: 'haben', part: 'gegessen',   impSg: 'Iss!',        impPl: 'Esst! / Essen Sie!',       noSg: 'Iss nicht!',        noPl: 'Esst nicht!' },
+        { id: 'yar',  inf: 'yarugol',  label: 'trinken',    stem: 'yar',  pres: ['trinke', 'trinkst', 'trinkt', 'trinken', 'trinken', 'trinken'],     aux: 'haben', part: 'getrunken',  impSg: 'Trink!',      impPl: 'Trinkt! / Trinken Sie!',   noSg: 'Trink nicht!',      noPl: 'Trinkt nicht!' },
+        { id: 'sood', inf: 'soodugol', label: 'kaufen',     stem: 'sood', pres: ['kaufe', 'kaufst', 'kauft', 'kaufen', 'kaufen', 'kaufen'],           aux: 'haben', part: 'gekauft',    impSg: 'Kauf!',       impPl: 'Kauft! / Kaufen Sie!',     noSg: 'Kauf nicht!',       noPl: 'Kauft nicht!' },
+        { id: 'goll', inf: 'gollugol', label: 'arbeiten',   stem: 'goll', pres: ['arbeite', 'arbeitest', 'arbeitet', 'arbeiten', 'arbeiten', 'arbeiten'], aux: 'haben', part: 'gearbeitet', impSg: 'Arbeite!', impPl: 'Arbeitet! / Arbeiten Sie!', noSg: 'Arbeite nicht!', noPl: 'Arbeitet nicht!' },
+        { id: 'jang', inf: 'jangugol', label: 'lernen',     stem: 'jang', pres: ['lerne', 'lernst', 'lernt', 'lernen', 'lernen', 'lernen'],           aux: 'haben', part: 'gelernt',    impSg: 'Lern!',       impPl: 'Lernt! / Lernen Sie!',     noSg: 'Lern nicht!',       noPl: 'Lernt nicht!' },
+        { id: 'wall', inf: 'wallugol', label: 'helfen',     stem: 'wall', pres: ['helfe', 'hilfst', 'hilft', 'helfen', 'helfen', 'helfen'],           aux: 'haben', part: 'geholfen',   impSg: 'Hilf!',       impPl: 'Helft! / Helfen Sie!',     noSg: 'Hilf nicht!',       noPl: 'Helft nicht!' },
+        { id: 'fen',  inf: 'fenugol',  label: 'lügen',      stem: 'fen',  pres: ['lüge', 'lügst', 'lügt', 'lügen', 'lügen', 'lügen'],                 aux: 'haben', part: 'gelogen',    impSg: 'Lüg!',        impPl: 'Lügt! / Lügen Sie!',       noSg: 'Lüg nicht!',        noPl: 'Lügt nicht!' },
+        { id: 'hab',  inf: 'habugol',  label: 'kämpfen',    stem: 'hab',  pres: ['kämpfe', 'kämpfst', 'kämpft', 'kämpfen', 'kämpfen', 'kämpfen'],     aux: 'haben', part: 'gekämpft',   impSg: 'Kämpf!',      impPl: 'Kämpft!',                  noSg: 'Kämpf nicht!',      noPl: 'Kämpft nicht!' },
+        { id: 'yenn', inf: 'yennugol', label: 'beleidigen', stem: 'yenn', pres: ['beleidige', 'beleidigst', 'beleidigt', 'beleidigen', 'beleidigen', 'beleidigen'], aux: 'haben', part: 'beleidigt', impSg: 'Beleidige!', impPl: 'Beleidigt!', noSg: 'Beleidige nicht!', noPl: 'Beleidigt nicht!' },
+      ];
+
+      /* =======================================================================
+         4. GRAMMATIK-ECKE (8 SUPER EINFACHE KAPITEL + MINI-CHECK)
+         ======================================================================= */
+      const GRAMMAR_CHAPTERS = [
+        {
+          id: 1,
+          title: '„Sein“ ohne Verb: Ko & Wonaa',
+          intro: 'Für „ich bin / du bist / das ist“ brauchst du im Pular kein Verb. Setze einfach Ko (ist) oder Wonaa (ist nicht) an den Satzanfang.',
+          formula: '<strong>Ko</strong> + Person + Beruf/Name = sein<br><strong>Wonaa</strong> + Person + Beruf/Name = nicht sein',
+          examples: [
+            ['Ko mi jangoowo.', 'Ich bin Student.'],
+            ['Wonaa mi Faranseejo.', 'Ich bin kein Franzose.'],
+            ['Ko Almaañ mi iwi.', 'Ich komme aus Deutschland.'],
+          ],
+          check: {
+            q: 'Wie heißt „Ich bin kein Franzose“?',
+            opts: ['Wonaa mi Faranseejo.', 'Ko mi Faranseejo.', 'Alaa mi Faranseejo.'],
+            correct: 0,
+            explain: 'Wonaa ist das direkte Gegenteil von Ko bei Berufen, Namen und Herkunft.',
+          },
+        },
+        {
+          id: 2,
+          title: 'Ich = mi oder mido? (Kurz vs. Lang)',
+          intro: 'Pronomen haben zwei Formen. Die lange Form (mido, hida, himo) nutzt du für Gefühle, Zustände und Dinge, die gerade jetzt passieren. Die kurze Form (mi, a, o) für Vergangenheit, Zukunft und Verneinung.',
+          formula: '<strong>Lang:</strong> mido, hida, himo, meden, hiden, hibe → jetzt / Gefühl<br><strong>Kurz:</strong> mi, a, o, men, en, be → gestern / morgen / nein',
+          examples: [
+            ['Mido weelaa. / Mido yahude.', 'Ich habe Hunger. / Ich gehe gerade.'],
+            ['Mi yahii. / Mi yahataa.', 'Ich bin gegangen. / Ich gehe nicht.'],
+            ['Hida komidi!', 'Du bist dumm!'],
+          ],
+          check: {
+            q: 'Welche Form brauchst du für „Ich esse gerade“?',
+            opts: ['Mido ñaamude.', 'Mi ñaamude.', 'An ñaamude.'],
+            correct: 0,
+            explain: 'Für „gerade jetzt“ (-ude) steht immer das lange Pronomen: Mido ñaamude.',
+          },
+        },
+        {
+          id: 3,
+          title: '3 Endungen reichen für alles (-ii, -ay, -ude)',
+          intro: 'Das Beste an Pular: Es gibt keine unregelmäßigen Verben. Du streichst einfach -ugol am Ende und klebst eine von drei Endungen an den Stamm.',
+          formula: 'Stamm + <strong>-ii</strong> = Vergangenheit<br>Stamm + <strong>-ay</strong> = Zukunft<br>Lang-Pronomen + Stamm + <strong>-ude</strong> = gerade jetzt',
+          examples: [
+            ['Mi ñaamii.', 'Ich habe gegessen.'],
+            ['Mi ñaamay.', 'Ich werde essen.'],
+            ['Mido ñaamude.', 'Ich esse gerade.'],
+          ],
+          check: {
+            q: 'soodugol = kaufen. Wie heißt „Ich werde kaufen“?',
+            opts: ['Mi sooday.', 'Mi soodii.', 'Mido soodude.'],
+            correct: 0,
+            explain: 'Stamm „sood-“ + Zukunfts-Endung „-ay“ = Mi sooday.',
+          },
+        },
+        {
+          id: 4,
+          title: 'Nein sagen leicht gemacht (alaa, -aali, -ataa)',
+          intro: 'Mit genau drei Bausteinen verneinst du fast jeden Satz im Alltag – immer mit dem kurzen Pronomen (mi, a, o ...).',
+          formula: '<strong>alaa</strong> = gibt es nicht / habe nicht<br><strong>-aali</strong> = habe ich nicht gemacht (Vergangenheit)<br><strong>-ataa</strong> = mache ich nicht (Zukunft / allgemein)',
+          examples: [
+            ['Mi alaa kaalisi. / Ñiiri alaa.', 'Ich habe kein Geld. / Kein Essen.'],
+            ['Mi faamaali.', 'Ich habe nicht verstanden.'],
+            ['Mi yahataa.', 'Ich gehe nicht.'],
+          ],
+          check: {
+            q: 'faamugol = verstehen. Wie sagst du „Ich habe nicht verstanden“?',
+            opts: ['Mi faamaali.', 'Mi faamataa.', 'Mido faamaali.'],
+            correct: 0,
+            explain: 'Vergangenheit verneinen = kurzes Pronomen + Stamm + -aali → Mi faamaali.',
+          },
+        },
+        {
+          id: 5,
+          title: 'Befehle & Verbote (Wata!)',
+          intro: 'Für Befehle an eine Person hängst du -u an den Stamm (respektvoll oder an mehrere: -ee). Für Verbote setzt du einfach Wata a davor.',
+          formula: '<strong>Befehl (Du):</strong> Stamm + <strong>-u</strong> &nbsp;|&nbsp; <strong>Ihr/Sie:</strong> Stamm + <strong>-ee</strong><br><strong>Verbot:</strong> <strong>Wata a</strong> + Befehl (Du) &nbsp;|&nbsp; <strong>Wata on</strong> + Befehl (Ihr)',
+          examples: [
+            ['Aru! / Aree!', 'Komm! / Kommen Sie!'],
+            ['Yahu! / Yahee!', 'Geh! / Geht!'],
+            ['Wata a fitin lan!', 'Nerv mich nicht!'],
+            ['Wata a fenu!', 'Lüg nicht!'],
+          ],
+          check: {
+            q: 'Wie sagst du direkt „Fass mich nicht an!“ (meemugol = anfassen)?',
+            opts: ['Wata a meem lan!', 'Alaa a meem lan!', 'Wonaa meem lan!'],
+            correct: 0,
+            explain: 'Jedes Verbot im Pular startet mit „Wata a“ (Du) oder „Wata on“ (Ihr).',
+          },
+        },
+        {
+          id: 6,
+          title: 'Die 5 wichtigsten Fragewörter',
+          intro: 'Fast jede Frage startet mit Ko + Fragewort. Mehr brauchst du im Gespräch nicht, um dich durchzufragen.',
+          formula: '<strong>Ko honto?</strong> = Wo / Wohin?<br><strong>Ko hondun?</strong> = Was?<br><strong>Ko hombo?</strong> = Wer?<br><strong>Ko jelu?</strong> = Wie viel?<br><strong>Ko fii hondun?</strong> = Warum?',
+          examples: [
+            ['Ko honto maakiti woni?', 'Wo ist der Markt?'],
+            ['Ko hondun gollataa?', 'Was arbeitest du?'],
+            ['Tamaati ko jelu?', 'Wie viel kosten die Tomaten?'],
+          ],
+          check: {
+            q: 'Du willst fragen: „Wo ist der Markt?“',
+            opts: ['Ko honto maakiti woni?', 'Ko hombo maakiti woni?', 'Ko jelu maakiti woni?'],
+            correct: 0,
+            explain: '„Ko honto“ fragt immer nach einem Ort („Wo / Wohin?“).',
+          },
+        },
+        {
+          id: 7,
+          title: 'Mein, Dein & „Haben“ (an/maa/makko + marugol/jogagol)',
+          intro: '„Mein / dein / sein“ steht im Pular immer HINTER dem Wort. Für „haben“ nutzt du marugol (besitzen) oder jogagol (dabei haben) – und zum Verneinen reicht immer alaa.',
+          formula: 'Wort + <strong>an</strong> (mein) / <strong>maa</strong> (dein) / <strong>makko</strong> (sein/ihr)<br><strong>Mido mari ...</strong> (besitzen) &nbsp;|&nbsp; <strong>Mido jogii ...</strong> (bei sich haben)',
+          examples: [
+            ['baaba an / innde maa', 'mein Vater / dein Name'],
+            ['Mido mari kaalisi.', 'Ich habe Geld.'],
+            ['Mido jogii cewdi.', 'Ich habe Kleingeld dabei.'],
+            ['Mi alaa kaalisi.', 'Ich habe kein Geld.'],
+          ],
+          check: {
+            q: 'Wie heißt „dein Nachname“ (yettoore = Nachname)?',
+            opts: ['yettoore maa', 'maa yettoore', 'yettoore an'],
+            correct: 0,
+            explain: 'Das Besitzwort steht immer dahinter: yettoore maa (dein Nachname).',
+          },
+        },
+        {
+          id: 8,
+          title: 'Keine Panik vor den 24 Klassen (Der 80/20-Trick)',
+          intro: 'Pular hat offiziell 24 Nominalklassen und Artikel stehen hinter dem Wort. Für gute Verständigung musst du sie aber NICHT auswendig lernen.',
+          formula: 'Merke nur 3 Artikel: <strong>on</strong> (Mensch / Fremdwort / allgemein) · <strong>ben</strong> (Menschen Pl.) · <strong>den / din</strong> (Dinge Pl.)<br><strong>80/20-Hack:</strong> Selbst ohne Artikel versteht dich jeder im Fuuta Jallon!',
+          examples: [
+            ['gorko on / worbe ben', 'der Mann / die Männer'],
+            ['maakiti on / taksi on', 'der Markt / das Taxi'],
+            ['Aussprache: c = tsch, ñ = nj', 'cewdi = tschewdi · ñiiri = njiiri'],
+          ],
+          check: {
+            q: 'Wie spricht man „cewdi“ (Kleingeld) aus?',
+            opts: ['tschewdi (c wie tsch)', 'kewdi (c wie k)', 'sewdi (c wie s)'],
+            correct: 0,
+            explain: 'Im Pular wird „c“ immer wie „tsch“ ausgesprochen.',
+          },
+        },
+      ];
+
+      /* =======================================================================
+         5. STATE & LOCALSTORAGE
+         ======================================================================= */
+      const STORAGE_KEY = 'mido_waawi_pular_clean_v3';
+
+      const defaultState = {
+        theme: 'light',
+        masteredIds: [],
+        cardDir: 'pular-de',
+        history: [], // { dir, src, translation, literalOrNote, politeness, sourceLabel }
+      };
+
+      function loadState() {
+        try {
+          const raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) return { ...defaultState };
+          const parsed = JSON.parse(raw);
+          return {
+            ...defaultState,
+            ...parsed,
+            masteredIds: Array.isArray(parsed.masteredIds) ? parsed.masteredIds : [],
+            history: Array.isArray(parsed.history) ? parsed.history.slice(0, 10) : [],
+          };
+        } catch (e) {
+          return { ...defaultState };
+        }
+      }
+
+      function saveState() {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+          // Stiller Fallback bei eingeschränktem Storage
+        }
+      }
+
+      let state = loadState();
+
+      const ui = {
+        tab: 'saetze',
+        // Sätze
+        search: '',
+        phraseCat: 'all',
+        phraseFilter: 'all', // 'all' | 'open'
+        sanakuOpen: false,
+        // Übersetzer
+        transDir: 'de-pular', // 'de-pular' | 'pular-de'
+        transInput: '',
+        transLoading: false,
+        transResult: null, // { translation, literalOrNote, politeness, sourceLabel }
+        transCopied: false,
+        swapSpin: false,
+        historyOpen: false,
+        // Üben
+        trainMode: 'cards', // 'cards' | 'quiz'
+        cardCat: 'all',
+        cardOnlyOpen: false,
+        deck: [],
+        cardIdx: 0,
+        cardFlipped: false,
+        quizOrder: [],
+        quizIdx: 0,
+        quizScore: 0,
+        quizChosen: null,
+        quizDone: false,
+        // Bauen
+        buildMode: 'satz', // 'satz' | 'befehl'
+        personId: 'mi',
+        formId: 'now',
+        verbId: 'yah',
+        cmdRespect: false,
+        // Grammatik
+        openGramId: 1,
+        gramChecks: {},
+      };
+
+      /* =======================================================================
+         6. HELPER FUNCTIONS
+         ======================================================================= */
+      function esc(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function normalizeText(str) {
+        return String(str || '')
+          .toLowerCase()
+          .replace(/[?!.,„“"()…]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function shuffle(arr) {
+        const copy = arr.slice();
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      function isMastered(id) {
+        return state.masteredIds.includes(id);
+      }
+
+      function setMastered(id, val) {
+        const idx = state.masteredIds.indexOf(id);
+        if (val && idx === -1) {
+          state.masteredIds.push(id);
+          saveState();
+        } else if (!val && idx !== -1) {
+          state.masteredIds.splice(idx, 1);
+          saveState();
+        }
+      }
+
+      function toggleMastered(id) {
+        const next = !isMastered(id);
+        setMastered(id, next);
+        return next;
+      }
+
+      function copyToClipboard(text) {
+        // Nutzt document.execCommand('copy') für zuverlässige iFrame-Kompatibilität
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          ta.setSelectionRange(0, text.length);
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return ok;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      let toastTimer = null;
+      function showToast(msg) {
+        const el = document.getElementById('toast');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+      }
+
+      function applyTheme() {
+        document.documentElement.setAttribute('data-theme', state.theme);
+        const moon = document.getElementById('ico-moon');
+        const sun = document.getElementById('ico-sun');
+        if (moon && sun) {
+          moon.style.display = state.theme === 'light' ? 'block' : 'none';
+          sun.style.display = state.theme === 'dark' ? 'block' : 'none';
+        }
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', state.theme === 'dark' ? '#000000' : '#F5F5F7');
+      }
+
+      /* =======================================================================
+         7. HYBRID TRANSLATION ENGINE (LOCAL EXACT + GEMINI API + FALLBACK)
+         ======================================================================= */
+      function lookupLocalExact(input, dir) {
+        const norm = normalizeText(input);
+        if (!norm) return null;
+
+        for (let i = 0; i < PHRASES.length; i++) {
+          const p = PHRASES[i];
+          const srcField = dir === 'de-pular' ? p.de : p.pular;
+          const tgtField = dir === 'de-pular' ? p.pular : p.de;
+
+          // Prüfe vollen Eintrag oder durch "/" getrennte Varianten
+          const variants = srcField.split('/').map((s) => normalizeText(s.replace(/\(.*?\)/g, '')));
+          const fullNorm = normalizeText(srcField.replace(/\(.*?\)/g, ''));
+
+          if (norm === fullNorm || variants.includes(norm)) {
+            return {
+              translation: tgtField,
+              literalOrNote: p.note || (dir === 'de-pular' ? `Fuuta-Jallon-Wendung für „${p.de}“` : `Entspricht im Deutschen „${p.de}“`),
+              politeness: p.tag || 'Alltag',
+              sourceLabel: 'Offline-Wörterbuch',
+            };
+          }
+        }
+
+        // Einzelwort-Exact-Match im Extra-Wörterbuch
+        if (dir === 'de-pular') {
+          for (let i = 0; i < EXTRA_DICT.length; i++) {
+            if (normalizeText(EXTRA_DICT[i][0]) === norm) {
+              return {
+                translation: EXTRA_DICT[i][1],
+                literalOrNote: 'Kernvokabel im Pular (Fuuta Jallon).',
+                politeness: 'Alltag',
+                sourceLabel: 'Offline-Wörterbuch',
+              };
+            }
+          }
+        } else {
+          for (let i = 0; i < EXTRA_DICT.length; i++) {
+            const pularOpts = EXTRA_DICT[i][1].split('/').map((s) => normalizeText(s));
+            if (pularOpts.includes(norm)) {
+              return {
+                translation: EXTRA_DICT[i][0].charAt(0).toUpperCase() + EXTRA_DICT[i][0].slice(1),
+                literalOrNote: 'Kernvokabel aus dem Pular (Fuuta Jallon).',
+                politeness: 'Alltag',
+                sourceLabel: 'Offline-Wörterbuch',
+              };
+            }
+          }
+        }
+
+        return null;
+      }
+
+      function lookupLocalFallback(input, dir) {
+        const norm = normalizeText(input);
+        const tokens = norm.split(' ').filter((t) => t.length > 1);
+
+        // 1. Beste Teil-Übereinstimmung in den 148 Phrasen suchen
+        let bestPhrase = null;
+        let bestScore = 0;
+
+        for (let i = 0; i < PHRASES.length; i++) {
+          const p = PHRASES[i];
+          const hay = normalizeText(dir === 'de-pular' ? p.de : p.pular);
+          if (hay.includes(norm) && norm.length >= 4) {
+            const score = norm.length / Math.max(hay.length, 1) + 1;
+            if (score > bestScore) {
+              bestScore = score;
+              bestPhrase = p;
+            }
+          } else if (tokens.length > 0) {
+            let hits = 0;
+            for (let t = 0; t < tokens.length; t++) {
+              if (hay.includes(tokens[t])) hits++;
+            }
+            const ratio = hits / tokens.length;
+            if (ratio >= 0.5 && hits > bestScore) {
+              bestScore = hits;
+              bestPhrase = p;
+            }
+          }
+        }
+
+        if (bestPhrase) {
+          return {
+            translation: dir === 'de-pular' ? bestPhrase.pular : bestPhrase.de,
+            literalOrNote: `Nächster Offline-Treffer (${bestPhrase.pular} = ${bestPhrase.de}). Für exakte freie Sätze bitte online verbinden.`,
+            politeness: bestPhrase.tag || 'Alltag',
+            sourceLabel: 'Offline-Wörterbuch (ungefähr)',
+          };
+        }
+
+        // 2. Wort-für-Wort-Annäherung aus dem Kernwörterbuch
+        const mapped = [];
+        let matchedCount = 0;
+        const words = norm.split(' ').filter(Boolean);
+
+        for (let w = 0; w < words.length; w++) {
+          const word = words[w];
+          let found = null;
+          for (let j = 0; j < EXTRA_DICT.length; j++) {
+            const deW = normalizeText(EXTRA_DICT[j][0]);
+            const puW = EXTRA_DICT[j][1].split('/')[0].trim();
+            if (dir === 'de-pular' && deW === word) {
+              found = puW;
+              break;
+            }
+            if (dir === 'pular-de' && normalizeText(EXTRA_DICT[j][1]).includes(word)) {
+              found = EXTRA_DICT[j][0];
+              break;
+            }
+          }
+          if (found) {
+            mapped.push(found);
+            matchedCount++;
+          } else {
+            mapped.push(word);
+          }
+        }
+
+        if (matchedCount > 0) {
+          return {
+            translation: mapped.join(' '),
+            literalOrNote: 'Wort-für-Wort-Annäherung ohne Internetverbindung – Grammatik ggf. grob.',
+            politeness: 'Ungefähr',
+            sourceLabel: 'Offline-Wörterbuch (ungefähr)',
+          };
+        }
+
+        return {
+          translation: 'Keine Offline-Übereinstimmung',
+          literalOrNote: 'Dieses Wort ist nicht im Offline-Wörterbuch und die KI-Verbindung ist gerade nicht erreichbar.',
+          politeness: '',
+          sourceLabel: 'Offline-Wörterbuch (ungefähr)',
+        };
+      }
+
+      async function fetchGeminiTranslation(text, dir) {
+        const apiKey = '';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const systemPrompt = `Du bist ein erfahrener Übersetzer und Muttersprachler für Pular aus dem Fuuta Jallon (Guinea) und Deutsch.
+Übersetze strikt im authentischen Dialekt Pular Fuuta Jallon (Guinea) nach dem Peace-Corps-Standard:
+- Nutze Fuuta-Jallon-Formen: mido/hida/himo/meden/hiden/hidon/hibe, a jaraama / on jaraama, ko honto, ko hondun, wonaa, alaa, -ugol/-agol/-egol, -ii/-ay/-ude/-aali/-ataa, wata a.
+- Nutze KEIN Senegal-Pulaar (kein "miɗo yaha" statt Fuuta-Formen, kein "naa" wo Fuuta "wonaa" bevorzugt, kein "mbadda" aus Ost-Fulfulde).
+- Übersetze natürlich, alltagstauglich und prägnant (80/20-Stil). Auch derbe Sätze, Grenzen oder Beleidigungen sachlich und authentisch übersetzen.
+- Antworte ausschließlich als JSON gemäß Schema:
+  - translation: die fertige Übersetzung in der Zielsprache.
+  - literalOrNote: maximal 1–2 sehr kurze, hilfreiche Sätze auf Deutsch (z. B. wörtliche Bedeutung, Aussprachetipp oder Kulturhinweis).
+  - politeness: kurzes deutsches Label wie "Alltag", "Respekt", "Locker", "Grenze" oder "Hart".`;
+
+        const userPrompt = dir === 'de-pular'
+          ? `Übersetze ins Pular (Fuuta Jallon, Guinea): "${text}"`
+          : `Übersetze aus dem Pular (Fuuta Jallon, Guinea) ins Deutsche: "${text}"`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: {
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'OBJECT',
+              properties: {
+                translation: { type: 'STRING' },
+                literalOrNote: { type: 'STRING' },
+                politeness: { type: 'STRING' },
+              },
+              required: ['translation', 'literalOrNote', 'politeness'],
+            },
+          },
+        };
+
+        const delays = [1000, 2000, 4000];
+        let lastErr = null;
+
+        for (let attempt = 0; attempt <= delays.length; attempt++) {
+          try {
+            const res = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+
+            if (res.status === 429 || res.status >= 500) {
+              if (attempt < delays.length) {
+                await new Promise((r) => setTimeout(r, delays[attempt]));
+                continue;
+              }
+            }
+
+            if (!res.ok) {
+              throw new Error('HTTP ' + res.status);
+            }
+
+            const data = await res.json();
+            const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!rawText) throw new Error('Leere Antwort');
+
+            const parsed = JSON.parse(rawText);
+            if (!parsed.translation) throw new Error('Ungültiges JSON');
+
+            return {
+              translation: parsed.translation.trim(),
+              literalOrNote: (parsed.literalOrNote || '').trim(),
+              politeness: (parsed.politeness || 'Alltag').trim(),
+              sourceLabel: 'KI · Fuuta Jallon',
+            };
+          } catch (err) {
+            lastErr = err;
+            if (attempt < delays.length) {
+              await new Promise((r) => setTimeout(r, delays[attempt]));
+            }
+          }
+        }
+        throw lastErr || new Error('Übersetzung fehlgeschlagen');
+      }
+
+      function pushHistory(entry) {
+        const filtered = state.history.filter(
+          (h) => !(h.dir === entry.dir && normalizeText(h.src) === normalizeText(entry.src))
+        );
+        state.history = [entry, ...filtered].slice(0, 10);
+        saveState();
+      }
+
+      async function runTranslate() {
+        const text = ui.transInput.trim();
+        if (!text || ui.transLoading) return;
+
+        ui.transCopied = false;
+
+        // 1. Sofortige lokale Exact-Suche
+        const exact = lookupLocalExact(text, ui.transDir);
+        if (exact) {
+          ui.transResult = exact;
+          ui.transLoading = false;
+          pushHistory({ dir: ui.transDir, src: text, ...exact });
+          renderUebersetzer(document.getElementById('main-content'));
+          return;
+        }
+
+        // 2. Live-KI-Übersetzung via Gemini API (mit Fallback)
+        ui.transLoading = true;
+        ui.transResult = null;
+        renderUebersetzer(document.getElementById('main-content'));
+
+        try {
+          const aiRes = await fetchGeminiTranslation(text, ui.transDir);
+          ui.transResult = aiRes;
+          pushHistory({ dir: ui.transDir, src: text, ...aiRes });
+        } catch (e) {
+          const fb = lookupLocalFallback(text, ui.transDir);
+          ui.transResult = fb;
+          if (fb.translation !== 'Keine Offline-Übereinstimmung') {
+            pushHistory({ dir: ui.transDir, src: text, ...fb });
+          }
+        } finally {
+          ui.transLoading = false;
+          if (ui.tab === 'uebersetzer') {
+            renderUebersetzer(document.getElementById('main-content'));
+          }
+        }
+      }
+
+      /* =======================================================================
+         8. ROUTER
+         ======================================================================= */
+      function setTab(tabName) {
+        ui.tab = tabName;
+        const titleEl = document.getElementById('header-title');
+        if (titleEl) titleEl.textContent = TAB_TITLES[tabName] || 'Mido waawi Pular!';
+
+        document.querySelectorAll('.nav-btn').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.tab === tabName);
+        });
+
+        render();
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+
+      function render() {
+        const main = document.getElementById('main-content');
+        if (!main) return;
+        if (ui.tab === 'saetze') renderSaetze(main);
+        else if (ui.tab === 'uebersetzer') renderUebersetzer(main);
+        else if (ui.tab === 'ueben') renderUeben(main);
+        else if (ui.tab === 'bauen') renderBauen(main);
+        else renderGrammatik(main);
+      }
+
+      /* =======================================================================
+         9. TAB 1: SÄTZE
+         ======================================================================= */
+      function getFilteredPhrases() {
+        const q = ui.search.trim().toLowerCase();
+        return PHRASES.filter((p) => {
+          if (ui.phraseCat !== 'all' && p.cat !== ui.phraseCat) return false;
+          if (ui.phraseFilter === 'open' && isMastered(p.id)) return false;
+          if (q) {
+            const hay = `${p.pular} ${p.de} ${p.note || ''} ${p.tag || ''}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+      }
+
+      function tagClass(tag) {
+        if (tag === 'Respekt') return 'tag-respect';
+        if (tag === 'Grenze') return 'tag-grenze';
+        if (tag === 'Beleidigung') return 'tag-hart';
+        return '';
+      }
+
+      function renderPhraseListHtml() {
+        const list = getFilteredPhrases();
+        if (!list.length) {
+          return `
+            <div class="card empty-card">
+              <h3>Keine Einträge gefunden</h3>
+              <p>${ui.phraseFilter === 'open' && !ui.search ? 'In dieser Kategorie hast du schon alles gelernt.' : 'Versuche einen anderen Suchbegriff.'}</p>
+              <button id="btn-clear-filters" type="button" class="btn-secondary" style="width:auto; min-height:42px;">
+                Alle anzeigen
+              </button>
+            </div>
+          `;
+        }
+
+        return list.map((p) => {
+          const done = isMastered(p.id);
+          const hasFoot = Boolean(p.tag || p.note);
+          return `
+            <article class="card phrase-card">
+              <div class="phrase-main">
+                <div class="phrase-pular">${esc(p.pular)}</div>
+                <div class="phrase-de">${esc(p.de)}</div>
+                ${hasFoot ? `
+                  <div class="phrase-foot">
+                    ${p.tag ? `<span class="tag-subtle ${tagClass(p.tag)}">${esc(p.tag)}</span>` : ''}
+                    ${p.note ? `<span class="phrase-note">${esc(p.note)}</span>` : ''}
+                  </div>
+                ` : ''}
+              </div>
+              <button type="button" class="circle-check ${done ? 'done' : ''}" data-check="${p.id}" aria-label="Als gelernt markieren" aria-pressed="${done}">
+                <span class="circle-check-inner">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                  </svg>
+                </span>
+              </button>
+            </article>
+          `;
+        }).join('');
+      }
+
+      function bindPhraseEvents(wrap) {
+        if (!wrap) return;
+        wrap.querySelectorAll('[data-check]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-check');
+            const nowDone = toggleMastered(id);
+            const prog = document.getElementById('quiet-progress');
+            if (prog) prog.textContent = `${state.masteredIds.length} / ${PHRASES.length} gelernt`;
+
+            if (ui.phraseFilter === 'open' && nowDone) {
+              wrap.innerHTML = renderPhraseListHtml();
+              bindPhraseEvents(wrap);
+            } else {
+              btn.classList.toggle('done', nowDone);
+              btn.setAttribute('aria-pressed', String(nowDone));
+            }
+          });
+        });
+
+        document.getElementById('btn-clear-filters')?.addEventListener('click', () => {
+          ui.search = '';
+          ui.phraseCat = 'all';
+          ui.phraseFilter = 'all';
+          renderSaetze(document.getElementById('main-content'));
+        });
+      }
+
+      function renderSaetze(main) {
+        const pillsHtml = [
+          `<button type="button" class="pill ${ui.phraseCat === 'all' ? 'active' : ''}" data-cat="all">Alle</button>`,
+          ...CATEGORIES.map((c) => `
+            <button type="button" class="pill ${ui.phraseCat === c.id ? 'active' : ''}" data-cat="${c.id}">${esc(c.label)}</button>
+          `),
+        ].join('');
+
+        const sanakuHtml = ui.phraseCat === 'klartext' ? `
+          <section class="card info-collapse ${ui.sanakuOpen ? 'open' : ''}">
+            <button id="btn-sanaku" type="button" class="info-collapse-btn" aria-expanded="${ui.sanakuOpen}">
+              <span>Kultur-Tipp: Sanakuyaagal (Diallo ↔ Bah, Sow ↔ Barry)</span>
+              <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="info-collapse-body">
+              Im Fuuta Jallon necken sich die vier großen Clans traditionell spielerisch: <strong>Diallo ↔ Bah / Baldé</strong> sowie <strong>Sow ↔ Barry</strong>. Sprüche wie „Ko a gujjo!“ (Dieb) oder „Ko a maccudo!“ (Sklave) sind dort lustig gemeint – außerhalb dieser Clan-Paare ist „maccudo“ aber ein absolutes Tabu.
+            </div>
+          </section>
+        ` : '';
+
+        main.innerHTML = `
+          <div class="view-enter" style="display:flex; flex-direction:column; gap:14px;">
+            <div class="search-box">
+              <svg class="ico-search" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path stroke-linecap="round" d="M20 20l-3.5-3.5"></path>
+              </svg>
+              <input id="phrase-search" class="search-input" type="search" value="${esc(ui.search)}" placeholder="Sätze oder Wörter suchen..." autocomplete="off" />
+              ${ui.search ? `
+                <button id="btn-search-clear" class="clear-x" type="button" aria-label="Suche leeren">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/>
+                  </svg>
+                </button>
+              ` : ''}
+            </div>
+
+            <div class="filter-meta-row">
+              <div class="slim-seg" role="tablist">
+                <button type="button" class="${ui.phraseFilter === 'all' ? 'active' : ''}" data-pfilter="all">Alle</button>
+                <button type="button" class="${ui.phraseFilter === 'open' ? 'active' : ''}" data-pfilter="open">Offen</button>
+              </div>
+              <span id="quiet-progress" class="quiet-progress">${state.masteredIds.length} / ${PHRASES.length} gelernt</span>
+            </div>
+
+            <div class="pills-scroll">${pillsHtml}</div>
+
+            ${sanakuHtml}
+
+            <div id="phrase-list-wrap" class="phrase-list">
+              ${renderPhraseListHtml()}
+            </div>
+          </div>
+        `;
+
+        const input = document.getElementById('phrase-search');
+        input?.addEventListener('input', (e) => {
+          ui.search = e.target.value;
+          const wrap = document.getElementById('phrase-list-wrap');
+          if (wrap) {
+            wrap.innerHTML = renderPhraseListHtml();
+            bindPhraseEvents(wrap);
+          }
+          const clr = document.getElementById('btn-search-clear');
+          if (ui.search && !clr) {
+            const b = document.createElement('button');
+            b.id = 'btn-search-clear';
+            b.className = 'clear-x';
+            b.type = 'button';
+            b.setAttribute('aria-label', 'Suche leeren');
+            b.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>';
+            b.addEventListener('click', () => {
+              ui.search = '';
+              renderSaetze(main);
+            });
+            input.parentElement.appendChild(b);
+          } else if (!ui.search && clr) {
+            clr.remove();
+          }
+        });
+
+        document.getElementById('btn-search-clear')?.addEventListener('click', () => {
+          ui.search = '';
+          renderSaetze(main);
+        });
+
+        main.querySelectorAll('[data-pfilter]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            ui.phraseFilter = btn.getAttribute('data-pfilter');
+            renderSaetze(main);
+          });
+        });
+
+        main.querySelectorAll('[data-cat]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            ui.phraseCat = btn.getAttribute('data-cat');
+            renderSaetze(main);
+          });
+        });
+
+        document.getElementById('btn-sanaku')?.addEventListener('click', (e) => {
+          ui.sanakuOpen = !ui.sanakuOpen;
+          const box = e.currentTarget.closest('.info-collapse');
+          box?.classList.toggle('open', ui.sanakuOpen);
+          e.currentTarget.setAttribute('aria-expanded', String(ui.sanakuOpen));
+        });
+
+        bindPhraseEvents(document.getElementById('phrase-list-wrap'));
+      }
+
+      /* =======================================================================
+         10. TAB 2: ÜBERSETZER (GOOGLE TRANSLATE STYLE)
+         ======================================================================= */
+      function renderUebersetzer(main) {
+        const isDeToPular = ui.transDir === 'de-pular';
+        const leftLang = isDeToPular ? 'Deutsch' : 'Pular (Fuuta)';
+        const rightLang = isDeToPular ? 'Pular (Fuuta)' : 'Deutsch';
+
+        const examples = isDeToPular
+          ? ['Wo ist der Markt?', 'Lass mich in Ruhe', 'Ich habe Hunger', 'Wie geht es der Familie?', 'Mach langsam']
+          : ["No wa'i?", 'Mido weelaa', 'Ko honto maakiti woni?', 'Accu lan!', 'Duytu seeda!'];
+
+        let outputHtml = '';
+        if (ui.transLoading) {
+          outputHtml = `
+            <section class="card trans-output-card">
+              <div class="skeleton-line" style="width:72%;"></div>
+              <div class="skeleton-line" style="width:48%; height:14px;"></div>
+            </section>
+          `;
+        } else if (ui.transResult) {
+          const r = ui.transResult;
+          outputHtml = `
+            <section class="card trans-output-card view-enter" aria-live="polite">
+              <div class="trans-result-text">${esc(r.translation)}</div>
+
+              <div class="trans-action-row">
+                <button id="btn-copy-trans" type="button" class="copy-btn ${ui.transCopied ? 'copied' : ''}">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    ${ui.transCopied
+                      ? '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>'
+                      : '<rect x="9" y="9" width="11" height="11" rx="2"/><path stroke-linecap="round" d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>'}
+                  </svg>
+                  <span>${ui.transCopied ? 'Kopiert ✓' : 'Kopieren'}</span>
+                </button>
+                <span class="source-indicator">${esc(r.sourceLabel)}</span>
+              </div>
+
+              ${(r.literalOrNote || r.politeness) ? `
+                <div class="trans-divider"></div>
+                <div class="trans-note-block">
+                  ${r.politeness ? `<span class="trans-politeness">${esc(r.politeness)}</span>` : ''}
+                  ${r.literalOrNote ? `<p class="trans-note-text">${esc(r.literalOrNote)}</p>` : ''}
+                </div>
+              ` : ''}
+            </section>
+          `;
+        }
+
+        const historyHtml = state.history.length > 0 ? `
+          <section class="card info-collapse ${ui.historyOpen ? 'open' : ''}">
+            <button id="btn-toggle-history" type="button" class="history-header-btn" aria-expanded="${ui.historyOpen}">
+              <span>Verlauf (${state.history.length})</span>
+              <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="history-list">
+              ${state.history.map((h, i) => `
+                <button type="button" class="history-item" data-hidx="${i}">
+                  <span class="history-src">${esc(h.src)}</span>
+                  <span class="history-tgt">${esc(h.translation)}</span>
+                </button>
+              `).join('')}
+              <div class="history-footer">
+                <button id="btn-clear-history" type="button" class="text-btn-muted">Verlauf leeren</button>
+              </div>
+            </div>
+          </section>
+        ` : '';
+
+        main.innerHTML = `
+          <div class="view-enter" style="display:flex; flex-direction:column; gap:14px;">
+            <!-- Sprach-Leiste -->
+            <section class="card lang-bar">
+              <div class="lang-label">${leftLang}</div>
+              <button id="btn-swap-lang" type="button" class="swap-btn ${ui.swapSpin ? 'rotated' : ''}" aria-label="Sprachen tauschen">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4"/>
+                </svg>
+              </button>
+              <div class="lang-label">${rightLang}</div>
+            </section>
+
+            <!-- Eingabe-Karte -->
+            <section class="card trans-input-card">
+              <div class="trans-textarea-wrap">
+                <textarea id="trans-input" class="trans-textarea" placeholder="Text eingeben..." rows="3">${esc(ui.transInput)}</textarea>
+                ${ui.transInput ? `
+                  <button id="btn-trans-clear" type="button" class="trans-clear-btn" aria-label="Eingabe löschen">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/>
+                    </svg>
+                  </button>
+                ` : ''}
+              </div>
+              <button id="btn-do-translate" type="button" class="btn-primary" ${!ui.transInput.trim() || ui.transLoading ? 'disabled' : ''}>
+                ${ui.transLoading ? 'Übersetze...' : 'Übersetzen'}
+              </button>
+            </section>
+
+            <!-- Beispiel-Chips wenn Eingabe leer -->
+            ${!ui.transInput.trim() ? `
+              <div class="example-chips">
+                ${examples.map((ex) => `
+                  <button type="button" class="example-chip" data-ex="${esc(ex)}">${esc(ex)}</button>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            <!-- Ausgabe-Karte -->
+            ${outputHtml}
+
+            <!-- Verlauf -->
+            ${historyHtml}
+          </div>
+        `;
+
+        // Events
+        const ta = document.getElementById('trans-input');
+        const submitBtn = document.getElementById('btn-do-translate');
+
+        ta?.addEventListener('input', (e) => {
+          const hadText = Boolean(ui.transInput.trim());
+          ui.transInput = e.target.value;
+          const hasText = Boolean(ui.transInput.trim());
+          if (submitBtn) submitBtn.disabled = !hasText || ui.transLoading;
+
+          // Bei Wechsel zwischen leer ↔ nicht-leer sanft neu rendern (für × Button & Beispiel-Chips)
+          if (hadText !== hasText) {
+            const pos = ta.selectionStart;
+            renderUebersetzer(main);
+            const nextTa = document.getElementById('trans-input');
+            if (nextTa) {
+              nextTa.focus();
+              nextTa.setSelectionRange(pos, pos);
+            }
+          }
+        });
+
+        ta?.addEventListener('keydown', (e) => {
+          if ((e.key === 'Enter' && !e.shiftKey) || (e.key === 'Enter' && (e.metaKey || e.ctrlKey))) {
+            e.preventDefault();
+            runTranslate();
+          }
+        });
+
+        document.getElementById('btn-do-translate')?.addEventListener('click', runTranslate);
+
+        document.getElementById('btn-trans-clear')?.addEventListener('click', () => {
+          ui.transInput = '';
+          ui.transResult = null;
+          ui.transCopied = false;
+          renderUebersetzer(main);
+          document.getElementById('trans-input')?.focus();
+        });
+
+        document.getElementById('btn-swap-lang')?.addEventListener('click', () => {
+          ui.swapSpin = !ui.swapSpin;
+          ui.transDir = ui.transDir === 'de-pular' ? 'pular-de' : 'de-pular';
+          if (ui.transResult && ui.transResult.translation && ui.transResult.translation !== 'Keine Offline-Übereinstimmung') {
+            ui.transInput = ui.transResult.translation;
+            ui.transResult = null;
+          }
+          ui.transCopied = false;
+          renderUebersetzer(main);
+        });
+
+        main.querySelectorAll('[data-ex]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            ui.transInput = btn.getAttribute('data-ex');
+            runTranslate();
+          });
+        });
+
+        document.getElementById('btn-copy-trans')?.addEventListener('click', () => {
+          if (!ui.transResult) return;
+          copyToClipboard(ui.transResult.translation);
+          ui.transCopied = true;
+          renderUebersetzer(main);
+          showToast('Kopiert ✓');
+        });
+
+        document.getElementById('btn-toggle-history')?.addEventListener('click', (e) => {
+          ui.historyOpen = !ui.historyOpen;
+          const box = e.currentTarget.closest('.info-collapse');
+          box?.classList.toggle('open', ui.historyOpen);
+          e.currentTarget.setAttribute('aria-expanded', String(ui.historyOpen));
+        });
+
+        main.querySelectorAll('[data-hidx]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const idx = Number(btn.getAttribute('data-hidx'));
+            const item = state.history[idx];
+            if (!item) return;
+            ui.transDir = item.dir;
+            ui.transInput = item.src;
+            ui.transResult = {
+              translation: item.translation,
+              literalOrNote: item.literalOrNote,
+              politeness: item.politeness,
+              sourceLabel: item.sourceLabel,
+            };
+            ui.transCopied = false;
+            ui.historyOpen = false;
+            renderUebersetzer(main);
+          });
+        });
+
+        document.getElementById('btn-clear-history')?.addEventListener('click', () => {
+          state.history = [];
+          ui.historyOpen = false;
+          saveState();
+          renderUebersetzer(main);
+          showToast('Verlauf geleert');
+        });
+      }
+
+      /* =======================================================================
+         11. TAB 3: ÜBEN (KARTEIKARTEN & ALLTAGS-QUIZ)
+         ======================================================================= */
+      function buildDeck(shouldShuffle) {
+        const list = PHRASES.filter((p) => {
+          if (ui.cardCat !== 'all' && p.cat !== ui.cardCat) return false;
+          if (ui.cardOnlyOpen && isMastered(p.id)) return false;
+          return true;
+        });
+        ui.deck = shouldShuffle ? shuffle(list) : list;
+        ui.cardIdx = 0;
+        ui.cardFlipped = false;
+      }
+
+      function initQuiz() {
+        ui.quizOrder = shuffle(QUIZ_QUESTIONS).map((item) => {
+          const tagged = item.options.map((text, i) => ({ text, ok: i === item.correct }));
+          const mixed = shuffle(tagged);
+          return {
+            q: item.q,
+            options: mixed.map((m) => m.text),
+            correct: mixed.findIndex((m) => m.ok),
+            explain: item.explain,
+          };
+        });
+        ui.quizIdx = 0;
+        ui.quizScore = 0;
+        ui.quizChosen = null;
+        ui.quizDone = false;
+      }
+
+      function renderUeben(main) {
+        if (ui.trainMode === 'cards' && ui.deck.length === 0 && !ui.cardOnlyOpen) {
+          buildDeck(false);
+        }
+        if (ui.trainMode === 'quiz' && ui.quizOrder.length === 0) {
+          initQuiz();
+        }
+
+        main.innerHTML = `
+          <div class="view-enter" style="display:flex; flex-direction:column; gap:16px;">
+            <div class="segmented" role="tablist">
+              <button type="button" class="seg-btn ${ui.trainMode === 'cards' ? 'active' : ''}" data-tmode="cards">Karteikarten</button>
+              <button type="button" class="seg-btn ${ui.trainMode === 'quiz' ? 'active' : ''}" data-tmode="quiz">Alltags-Quiz</button>
+            </div>
+            <div id="ueben-body"></div>
+          </div>
+        `;
+
+        main.querySelectorAll('[data-tmode]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            ui.trainMode = btn.getAttribute('data-tmode');
+            if (ui.trainMode === 'cards') buildDeck(false);
+            if (ui.trainMode === 'quiz' && ui.quizOrder.length === 0) initQuiz();
+            renderUeben(main);
+          });
+        });
+
+        const body = document.getElementById('ueben-body');
+        if (ui.trainMode === 'cards') renderCards(body);
+        else renderQuiz(body);
+      }
+
+      function renderCards(container) {
+        const pularFront = state.cardDir === 'pular-de';
+        const len = ui.deck.length;
+        const card = len > 0 ? ui.deck[ui.cardIdx % len] : null;
+        const done = card ? isMastered(card.id) : false;
+
+        const catOptions = [
+          `<option value="all" ${ui.cardCat === 'all' ? 'selected' : ''}>Alle Kategorien</option>`,
+          ...CATEGORIES.map((c) => `
+            <option value="${c.id}" ${ui.cardCat === c.id ? 'selected' : ''}>${esc(c.label)}</option>
+          `),
+        ].join('');
+
+        let stageHtml = '';
+        if (!card) {
+          stageHtml = `
+            <div class="card empty-card">
+              <h3>Alles gelernt</h3>
+              <p>In dieser Auswahl sind keine offenen Karten mehr übrig.</p>
+              <button id="btn-cards-all" type="button" class="btn-primary" style="width:auto; min-height:44px;">
+                Alle wiederholen
+              </button>
+            </div>
+          `;
+        } else {
+          const catObj = CATEGORIES.find((c) => c.id === card.cat);
+          const frontText = pularFront ? card.pular : card.de;
+          const backText = pularFront ? card.de : card.pular;
+
+          stageHtml = `
+            <div id="flip-stage" class="flip-stage" role="button" tabindex="0" aria-label="Karte umdrehen">
+              <div id="flip-inner" class="flip-inner ${ui.cardFlipped ? 'flipped' : ''}">
+                <div class="flip-face">
+                  <div class="flip-top">
+                    <span>${esc(catObj ? catObj.label : '')}</span>
+                    <span>${pularFront ? 'Pular' : 'Deutsch'}</span>
+                  </div>
+                  <div class="flip-center">
+                    <div class="flip-text">${esc(frontText)}</div>
+                  </div>
+                  <div class="flip-hint">Tippen zum Umdrehen</div>
+                </div>
+
+                <div class="flip-face flip-back">
+                  <div class="flip-top">
+                    <span>${esc(catObj ? catObj.label : '')}</span>
+                    <span>${pularFront ? 'Deutsch' : 'Pular'}</span>
+                  </div>
+                  <div class="flip-center">
+                    <div class="flip-text">${esc(backText)}</div>
+                    ${card.note ? `<div class="flip-note">${esc(card.note)}</div>` : ''}
+                  </div>
+                  <div class="flip-hint">← Noch üben · Sitzt ✓ →</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="two-col-actions">
+              <button id="btn-card-again" type="button" class="btn-secondary">Noch üben</button>
+              <button id="btn-card-ok" type="button" class="btn-primary">Sitzt ✓</button>
+            </div>
+
+            <div class="card-sub-nav">
+              <span>${(ui.cardIdx % len) + 1} / ${len}${done ? ' · gelernt' : ''}</span>
+              <button id="btn-card-shuffle" type="button" class="text-btn-muted" style="padding:4px 8px;">Mischen</button>
+            </div>
+          `;
+        }
+
+        container.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="compact-filter-bar">
+              <select id="card-cat-select" class="clean-select" aria-label="Kategorie wählen">
+                ${catOptions}
+              </select>
+              <button id="btn-card-dir" type="button" class="compact-chip">
+                ${pularFront ? 'Pular → DE' : 'DE → Pular'}
+              </button>
+              <button id="btn-card-open" type="button" class="compact-chip ${ui.cardOnlyOpen ? 'active' : ''}">
+                Nur offene
+              </button>
+            </div>
+            ${stageHtml}
+          </div>
+        `;
+
+        document.getElementById('card-cat-select')?.addEventListener('change', (e) => {
+          ui.cardCat = e.target.value;
+          buildDeck(false);
+          renderCards(container);
+        });
+
+        document.getElementById('btn-card-dir')?.addEventListener('click', () => {
+          state.cardDir = state.cardDir === 'pular-de' ? 'de-pular' : 'pular-de';
+          ui.cardFlipped = false;
+          saveState();
+          renderCards(container);
+        });
+
+        document.getElementById('btn-card-open')?.addEventListener('click', () => {
+          ui.cardOnlyOpen = !ui.cardOnlyOpen;
+          buildDeck(false);
+          renderCards(container);
+        });
+
+        document.getElementById('btn-cards-all')?.addEventListener('click', () => {
+          ui.cardOnlyOpen = false;
+          buildDeck(false);
+          renderCards(container);
+        });
+
+        if (card) {
+          const markAgain = () => {
+            setMastered(card.id, false);
+            ui.cardFlipped = false;
+            ui.cardIdx = (ui.cardIdx + 1) % ui.deck.length;
+            renderCards(container);
+          };
+
+          const markOk = () => {
+            setMastered(card.id, true);
+            ui.cardFlipped = false;
+            if (ui.cardOnlyOpen) {
+              ui.deck = ui.deck.filter((c) => c.id !== card.id);
+              if (ui.cardIdx >= ui.deck.length) ui.cardIdx = 0;
+            } else {
+              ui.cardIdx = (ui.cardIdx + 1) % ui.deck.length;
+            }
+            renderCards(container);
+          };
+
+          const stage = document.getElementById('flip-stage');
+          const inner = document.getElementById('flip-inner');
+          let sx = 0;
+          let sy = 0;
+          let swiped = false;
+
+          const doFlip = () => {
+            ui.cardFlipped = !ui.cardFlipped;
+            inner?.classList.toggle('flipped', ui.cardFlipped);
+          };
+
+          stage?.addEventListener('touchstart', (e) => {
+            sx = e.changedTouches[0].screenX;
+            sy = e.changedTouches[0].screenY;
+            swiped = false;
+          }, { passive: true });
+
+          stage?.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].screenX - sx;
+            const dy = e.changedTouches[0].screenY - sy;
+            if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+              swiped = true;
+              if (dx > 0) markOk();
+              else markAgain();
+            }
+          }, { passive: true });
+
+          stage?.addEventListener('click', () => {
+            if (swiped) { swiped = false; return; }
+            doFlip();
+          });
+
+          stage?.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+              doFlip();
+            }
+          });
+
+          document.getElementById('btn-card-again')?.addEventListener('click', markAgain);
+          document.getElementById('btn-card-ok')?.addEventListener('click', markOk);
+          document.getElementById('btn-card-shuffle')?.addEventListener('click', () => {
+            ui.deck = shuffle(ui.deck);
+            ui.cardIdx = 0;
+            ui.cardFlipped = false;
+            showToast('Karten gemischt');
+            renderCards(container);
+          });
+        }
+      }
+
+      function renderQuiz(container) {
+        const total = ui.quizOrder.length;
+
+        if (ui.quizDone) {
+          const pct = Math.round((ui.quizScore / total) * 100);
+          const headline = pct >= 85 ? 'No moyyi fota!' : pct >= 60 ? 'No marsude!' : 'Weiter so!';
+          container.innerHTML = `
+            <section class="card empty-card view-enter">
+              <div style="font-size:36px; font-weight:700; color:var(--accent); margin-bottom:4px;">${ui.quizScore} / ${total}</div>
+              <h3>${headline}</h3>
+              <p>Du hast ${pct}% der Alltags-Situationen richtig beantwortet.</p>
+              <button id="btn-quiz-again" type="button" class="btn-primary">Neue Runde starten</button>
+            </section>
+          `;
+          document.getElementById('btn-quiz-again')?.addEventListener('click', () => {
+            initQuiz();
+            renderQuiz(container);
+          });
+          return;
+        }
+
+        const item = ui.quizOrder[ui.quizIdx];
+        const pct = Math.round(((ui.quizIdx + (ui.quizChosen !== null ? 1 : 0)) / total) * 100);
+
+        const optsHtml = item.options.map((opt, idx) => {
+          let cls = '';
+          if (ui.quizChosen !== null) {
+            if (idx === item.correct) cls = 'correct';
+            else if (idx === ui.quizChosen) cls = 'wrong';
+            else cls = 'dim';
+          }
+          return `
+            <button type="button" class="quiz-opt ${cls}" data-qopt="${idx}" ${ui.quizChosen !== null ? 'disabled' : ''}>
+              ${esc(opt)}
+            </button>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <section class="card quiz-card view-enter">
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-secondary);">
+              <span>Frage ${ui.quizIdx + 1} von ${total}</span>
+              <span>${ui.quizScore} richtig</span>
+            </div>
+            <div class="progress-slim">
+              <div class="progress-slim-fill" style="width:${pct}%;"></div>
+            </div>
+
+            <div class="quiz-question">${esc(item.q)}</div>
+            <div class="quiz-opts">${optsHtml}</div>
+
+            ${ui.quizChosen !== null ? `
+              <div class="quiz-explain view-enter">
+                <strong>${ui.quizChosen === item.correct ? 'Richtig.' : 'Hinweis:'}</strong> ${esc(item.explain)}
+              </div>
+              <button id="btn-quiz-next" type="button" class="btn-primary">
+                ${ui.quizIdx + 1 < total ? 'Weiter' : 'Ergebnis anzeigen'}
+              </button>
+            ` : ''}
+          </section>
+        `;
+
+        container.querySelectorAll('[data-qopt]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (ui.quizChosen !== null) return;
+            const picked = Number(btn.getAttribute('data-qopt'));
+            ui.quizChosen = picked;
+            if (picked === item.correct) ui.quizScore++;
+            renderQuiz(container);
+          });
+        });
+
+        document.getElementById('btn-quiz-next')?.addEventListener('click', () => {
+          if (ui.quizIdx + 1 < total) {
+            ui.quizIdx++;
+            ui.quizChosen = null;
+          } else {
+            ui.quizDone = true;
+          }
+          renderQuiz(container);
+        });
+      }
+
+      /* =======================================================================
+         12. TAB 4: BAUEN (SATZBAUER & BEFEHL / VERBOT)
+         ======================================================================= */
+      function buildGermanSentence(person, form, verb) {
+        const s = person.deSubj;
+        const pres = verb.pres[person.idx];
+        const pastAux = verb.aux === 'sein' ? person.sein : person.haben;
+        const exclNote = person.id === 'men' ? ' (ohne dich)' : person.id === 'en' ? ' (mit dir)' : '';
+
+        switch (form.id) {
+          case 'now':  return `${s} ${pres} gerade.${exclNote}`;
+          case 'will': return `${s} ${person.will} ${verb.label}.${exclNote}`;
+          case 'past': return `${s} ${pastAux} ${verb.part}.${exclNote}`;
+          case 'fut':  return `${s} ${person.werden} ${verb.label}.${exclNote}`;
+          case 'neg':  return `${s} ${pres} nicht / ${person.werden} nicht ${verb.label}.${exclNote}`;
+          case 'can':  return `${s} ${person.kann} ${verb.label}.${exclNote}`;
+          default:     return '';
+        }
+      }
+
+      function renderBauen(main) {
+        main.innerHTML = `
+          <div class="view-enter" style="display:flex; flex-direction:column; gap:16px;">
+            <div class="segmented" role="tablist">
+              <button type="button" class="seg-btn ${ui.buildMode === 'satz' ? 'active' : ''}" data-bmode="satz">Satzbauer</button>
+              <button type="button" class="seg-btn ${ui.buildMode === 'befehl' ? 'active' : ''}" data-bmode="befehl">Befehl &amp; Verbot</button>
+            </div>
+            <div id="bauen-body"></div>
+          </div>
+        `;
+
+        main.querySelectorAll('[data-bmode]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            ui.buildMode = btn.getAttribute('data-bmode');
+            renderBauen(main);
+          });
+        });
+
+        const body = document.getElementById('bauen-body');
+        if (ui.buildMode === 'satz') renderSatzbauer(body);
+        else renderBefehl(body);
+      }
+
+      function renderSatzbauer(container) {
+        const person = BUILDER_PERSONS.find((p) => p.id === ui.personId) || BUILDER_PERSONS[0];
+        const form = BUILDER_FORMS.find((f) => f.id === ui.formId) || BUILDER_FORMS[0];
+        const verb = BUILDER_VERBS.find((v) => v.id === ui.verbId) || BUILDER_VERBS[0];
+
+        const pronText = form.pron === 'long' ? person.longP : person.shortP;
+        const auxPart = form.aux ? `${form.aux} ` : '';
+        const deText = buildGermanSentence(person, form, verb);
+
+        const breakdownParts = [
+          `${pronText.toLowerCase()} (${person.deLabel} · ${form.pron === 'long' ? 'lang' : 'kurz'})`,
+          ...(form.aux ? [`${form.aux} (${form.id === 'will' ? 'will' : 'kann'})`] : []),
+          `${verb.stem}- (${verb.label})`,
+          `-${form.end} (${form.note})`,
+        ];
+
+        container.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <!-- Live-Vorschau -->
+            <section class="card preview-card" aria-live="polite">
+              <div class="preview-pular">
+                ${esc(pronText)} ${esc(auxPart)}${esc(verb.stem)}<span class="accent-end">${esc(form.end)}</span>.
+              </div>
+              <div class="preview-de">${esc(deText)}</div>
+              <div class="preview-breakdown">${esc(breakdownParts.join(' + '))}</div>
+            </section>
+
+            <!-- 1. Person -->
+            <div>
+              <div class="section-eyebrow">1. Person</div>
+              <div class="chip-grid-3">
+                ${BUILDER_PERSONS.map((p) => `
+                  <button type="button" class="select-chip ${p.id === person.id ? 'active' : ''}" data-bp="${p.id}">
+                    <span class="sc-main">${esc(p.label)}</span>
+                    <span class="sc-sub">${esc(p.deLabel)}</span>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- 2. Form -->
+            <div>
+              <div class="section-eyebrow">2. Zeit / Form</div>
+              <div class="chip-grid">
+                ${BUILDER_FORMS.map((f) => `
+                  <button type="button" class="select-chip ${f.id === form.id ? 'active' : ''}" data-bf="${f.id}">
+                    <span class="sc-main">${esc(f.label)}</span>
+                    <span class="sc-sub">${esc(f.sub)}</span>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- 3. Verb -->
+            <div>
+              <div class="section-eyebrow">3. Verb (-ugol)</div>
+              <div class="chip-grid">
+                ${BUILDER_VERBS.map((v) => `
+                  <button type="button" class="select-chip ${v.id === verb.id ? 'active' : ''}" data-bv="${v.id}">
+                    <span class="sc-main">${esc(v.label)}</span>
+                    <span class="sc-sub">${esc(v.inf)}</span>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.querySelectorAll('[data-bp]').forEach((b) => {
+          b.addEventListener('click', () => {
+            ui.personId = b.getAttribute('data-bp');
+            renderSatzbauer(container);
+          });
+        });
+
+        container.querySelectorAll('[data-bf]').forEach((b) => {
+          b.addEventListener('click', () => {
+            ui.formId = b.getAttribute('data-bf');
+            renderSatzbauer(container);
+          });
+        });
+
+        container.querySelectorAll('[data-bv]').forEach((b) => {
+          b.addEventListener('click', () => {
+            ui.verbId = b.getAttribute('data-bv');
+            renderSatzbauer(container);
+          });
+        });
+      }
+
+      function renderBefehl(container) {
+        const verb = BUILDER_VERBS.find((v) => v.id === ui.verbId) || BUILDER_VERBS[0];
+        const capStem = verb.stem.charAt(0).toUpperCase() + verb.stem.slice(1);
+        const posPular = ui.cmdRespect ? `${capStem}ee!` : `${capStem}u!`;
+        const negPular = ui.cmdRespect ? `Wata on ${verb.stem}u!` : `Wata a ${verb.stem}u!`;
+        const posDe = ui.cmdRespect ? verb.impPl : verb.impSg;
+        const negDe = ui.cmdRespect ? verb.noPl : verb.noSg;
+
+        container.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div class="segmented" role="group" aria-label="Anrede wählen">
+              <button type="button" class="seg-btn ${!ui.cmdRespect ? 'active' : ''}" data-cmdresp="0">Du (normal)</button>
+              <button type="button" class="seg-btn ${ui.cmdRespect ? 'active' : ''}" data-cmdresp="1">Ihr / Respekt</button>
+            </div>
+
+            <div class="cmd-pair" aria-live="polite">
+              <section class="card cmd-card">
+                <div class="cmd-kicker">Befehl</div>
+                <div class="cmd-pular">${esc(posPular)}</div>
+                <div class="cmd-de">${esc(posDe)}</div>
+              </section>
+
+              <section class="card cmd-card">
+                <div class="cmd-kicker neg">Verbot</div>
+                <div class="cmd-pular">${esc(negPular)}</div>
+                <div class="cmd-de">${esc(negDe)}</div>
+              </section>
+            </div>
+
+            <div>
+              <div class="section-eyebrow">Verb auswählen</div>
+              <div class="chip-grid">
+                ${BUILDER_VERBS.map((v) => `
+                  <button type="button" class="select-chip ${v.id === verb.id ? 'active' : ''}" data-cv="${v.id}">
+                    <span class="sc-main">${esc(v.label)}</span>
+                    <span class="sc-sub">${esc(v.inf)}</span>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.querySelectorAll('[data-cmdresp]').forEach((b) => {
+          b.addEventListener('click', () => {
+            ui.cmdRespect = b.getAttribute('data-cmdresp') === '1';
+            renderBefehl(container);
+          });
+        });
+
+        container.querySelectorAll('[data-cv]').forEach((b) => {
+          b.addEventListener('click', () => {
+            ui.verbId = b.getAttribute('data-cv');
+            renderBefehl(container);
+          });
+        });
+      }
+
+      /* =======================================================================
+         13. TAB 5: GRAMMATIK (8 KAPITEL – FOKUSSIERTES AKKORDEON)
+         ======================================================================= */
+      function renderGrammatik(main) {
+        const itemsHtml = GRAMMAR_CHAPTERS.map((ch) => {
+          const isOpen = ui.openGramId === ch.id;
+          const picked = ui.gramChecks[ch.id];
+          const answered = picked !== undefined;
+
+          return `
+            <article class="card gram-item ${isOpen ? 'open' : ''}">
+              <button type="button" class="gram-head" data-ghead="${ch.id}" aria-expanded="${isOpen}">
+                <span class="gram-head-left">
+                  <span class="gram-index">${ch.id}</span>
+                  <span class="gram-title">${esc(ch.title)}</span>
+                </span>
+                <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+
+              <div class="gram-content">
+                <p class="gram-intro">${esc(ch.intro)}</p>
+
+                <div class="formula-box">${ch.formula}</div>
+
+                <div class="examples-list">
+                  ${ch.examples.map(([pu, de]) => `
+                    <div><b>${esc(pu)}</b> — ${esc(de)}</div>
+                  `).join('')}
+                </div>
+
+                <div class="mini-check">
+                  <div class="mini-check-label">Mini-Check</div>
+                  <div class="mini-check-q">${esc(ch.check.q)}</div>
+                  <div class="mini-opts">
+                    ${ch.check.opts.map((opt, idx) => {
+                      let cls = '';
+                      if (answered) {
+                        if (idx === ch.check.correct) cls = 'ok';
+                        else if (idx === picked) cls = 'bad';
+                      }
+                      return `
+                        <button type="button" class="mini-opt ${cls}" data-gcheck="${ch.id}" data-gopt="${idx}">
+                          ${esc(opt)}
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+                  ${answered ? `
+                    <div class="mini-feedback view-enter">
+                      <strong>${picked === ch.check.correct ? 'Richtig.' : 'Lösung:'}</strong> ${esc(ch.check.explain)}
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        main.innerHTML = `
+          <div class="gram-stack view-enter">
+            ${itemsHtml}
+          </div>
+        `;
+
+        main.querySelectorAll('[data-ghead]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = Number(btn.getAttribute('data-ghead'));
+            ui.openGramId = ui.openGramId === id ? null : id;
+            renderGrammatik(main);
+          });
+        });
+
+        main.querySelectorAll('[data-gcheck]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const chId = Number(btn.getAttribute('data-gcheck'));
+            const optIdx = Number(btn.getAttribute('data-gopt'));
+            ui.gramChecks[chId] = optIdx;
+            renderGrammatik(main);
+          });
+        });
+      }
+
+      /* =======================================================================
+         14. INITIALISIERUNG
+         ======================================================================= */
+      function init() {
+        applyTheme();
+        buildDeck(false);
+        initQuiz();
+
+        document.querySelectorAll('.nav-btn').forEach((btn) => {
+          btn.addEventListener('click', () => setTab(btn.dataset.tab));
+        });
+
+        document.getElementById('btn-theme')?.addEventListener('click', () => {
+          state.theme = state.theme === 'light' ? 'dark' : 'light';
+          saveState();
+          applyTheme();
+        });
+
+        setTab('saetze');
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
+</body>
+</html>
